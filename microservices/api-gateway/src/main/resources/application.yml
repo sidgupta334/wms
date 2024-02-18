@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: API-GATEWAY
+
+# ========================================
+# API Gateway routes configurations
+# ========================================
+
+  cloud:
+    gateway:
+      routes:
+        - id: LIGHTCAST-SERVICE
+          uri: lb://LIGHTCAST-SERVICE
+          predicates:
+            - Path=/api/skills/**,/api/job-titles/**
+          filters:
+            - AuthenticationFilter
+
+        - id: EMPLOYEES-SERVICE
+          uri: lb://EMPLOYEES-SERVICE
+          predicates:
+            - Path=/api/employees/**
+          filters:
+            - AuthenticationFilter
+
+        - id: AUTH-SERVICE
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
+
+
+
+# ========================================
+# Eureka Service Discovery configurations
+# ========================================
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:password@localhost:8761/eureka
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        cloud:
+          gateway:
+            - TRACE
+            - route:
+                RouteDefinitionLocator: INFO

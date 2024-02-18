@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api-gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api-gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/discovery-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/discovery-server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/employees-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/employees-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lightcast-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/lightcast-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/microservices.iml" filepath="$PROJECT_DIR$/microservices.iml" />
+    </modules>
+  </component>
+</project>

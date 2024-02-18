@@ -1,0 +1,63 @@
+server:
+  # TO ALLOW SPRING BOOT TO RANDOMLY PICK ANY AVAILABLE PORT WHILE RUNNING
+  port: 0
+
+app:
+  lightcast:
+    authUrl: https://auth.emsicloud.com/connect/token
+    baseUrl: https://emsiservices.com/
+    skillsUrl: skills/versions/latest/skills
+    jobTitlesUrl: titles/versions/latest/titles
+    clientId: 72dv4q222e3xmgjk
+    secret: AeSHdRYI
+    scope: emsi_open
+
+spring:
+  codec:
+    max-in-memory-size: 50MB
+  application:
+    name: LIGHTCAST-SERVICE
+  # =====================================
+  # MYSQL Configurations
+  # =====================================
+  datasource:
+    url: jdbc:mysql://localhost:3306/wms-lightcast
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # =====================================
+  # JPA Configurations
+  # =====================================
+  jpa:
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # =====================================
+  # Redis Configurations
+  # =====================================
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: redis-password
+    pool:
+      max-active: 5
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+      timeout: 3000
+
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+
+# ========================================
+# Eureka Service Discovery configurations
+# ========================================
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:password@localhost:8761/eureka
