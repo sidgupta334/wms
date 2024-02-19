@@ -1,9 +1,7 @@
 package com.wms.employeesService.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +18,11 @@ public class EmployeeSkillsMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
-    private String employeeId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "employeeId")
+    @JsonIgnore
+    private Employee employee;
     private String skillId;
-    private Date timestamp;
+    private Date timestamp = new Date();
 }

@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Data
-public class JobTitleResponse {
-    private String entityId;
-    private String externalCode;
-    private String name;
+@Builder
+public class GetSkillsRequest {
+    private String[] ids;
 }

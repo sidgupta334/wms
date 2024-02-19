@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class SkillResponse {
-    private String externalCode;
+    private String id;
     private String name;
 }

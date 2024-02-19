@@ -19,7 +19,7 @@ public class JobTitleController {
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public JobTitleResponse getJobTitleById(@PathVariable("id") String id) {
-        return jobTitlesService.getJobTitleById(id);
+        return jobTitlesService.getJobTitleByExternalId(id);
     }
 
     @GetMapping("sync")

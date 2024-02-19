@@ -1,5 +1,6 @@
 package com.wms.lightcastservice.controller;
 
+import com.wms.lightcastservice.dto.GetSkillsRequest;
 import com.wms.lightcastservice.dto.SkillResponse;
 import com.wms.lightcastservice.service.SkillsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,10 @@ public class SkillController {
     @ResponseStatus(HttpStatus.OK)
     public List<SkillResponse> getAllSkills() {
         return skillsService.getAllSkills();
+    }
+
+    @PostMapping
+    public List<SkillResponse> getSkillsByIds(@RequestBody GetSkillsRequest request) {
+        return skillsService.getSkillsByExternalId(request.getIds());
     }
 }

@@ -35,11 +35,6 @@ public class JobTitlesService {
         thread.start();
     }
 
-    public JobTitleResponse getJobTitleById(String jobTitleId) {
-        JobTitle jobTitle = jobTitleRepository.findById(jobTitleId).orElse(null);
-        return jobTitle == null ? null : mapToJobTitleResponse((jobTitle));
-    }
-
     public List<JobTitleResponse> getAllJobTitles() {
         final ValueOperations<String, JobTitle> operations = redisTemplate.opsForValue();
         Set<String> keys = redisTemplate.keys(JOB_TITLE_KEY + "*");
@@ -63,10 +58,10 @@ public class JobTitlesService {
     }
 
     private JobTitleResponse mapToJobTitleResponse(JobTitle jobTitle) {
+        if (jobTitle == null) return null;
         return JobTitleResponse.builder()
                 .name(jobTitle.getName())
-                .externalCode(jobTitle.getExternalCode())
-                .entityId(jobTitle.getEntityId())
+                .id(jobTitle.getExternalCode())
                 .build();
     }
 }

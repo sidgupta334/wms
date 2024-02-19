@@ -22,7 +22,6 @@ public class EmployeeDto {
     @Email
     private String email;
 
-    @NotBlank
     private String password = "default";
 
     @NotBlank

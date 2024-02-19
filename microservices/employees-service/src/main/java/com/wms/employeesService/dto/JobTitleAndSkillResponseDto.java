@@ -1,4 +1,4 @@
-package com.wms.lightcastservice.dto;
+package com.wms.employeesService.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Data
-public class JobTitleResponse {
+@Builder
+public class JobTitleAndSkillResponseDto {
     private String id;
     private String name;
 }

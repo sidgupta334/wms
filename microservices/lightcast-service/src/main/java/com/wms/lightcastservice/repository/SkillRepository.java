@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SkillRepository extends JpaRepository<Skill, String> {
     public Skill findByExternalCode(String externalCode);
+    public List<Skill> findAllByExternalCode(String[] externalCode);
 }

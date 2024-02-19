@@ -11,12 +11,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeesResponseDto {
-    private String entityId;
+public class UpdateEmployeeDto {
     private String externalId;
-    private String name;
-    private String email;
-    private boolean isAdmin;
-    private JobTitleAndSkillResponseDto jobTitle;
-    private List<JobTitleAndSkillResponseDto> skills;
+    private String jobTitleId;
+    private String[] skillIds;
 }

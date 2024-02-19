@@ -3,6 +3,7 @@ package com.wms.employeesService.controller;
 import com.wms.employeesService.dto.CreateEmployeesDto;
 import com.wms.employeesService.dto.EmployeeDto;
 import com.wms.employeesService.dto.EmployeesResponseDto;
+import com.wms.employeesService.dto.UpdateEmployeeDto;
 import com.wms.employeesService.service.EmployeeService;
 import com.wms.employeesService.utils.IEmployeesCreateResult;
 import jakarta.validation.Valid;
@@ -22,17 +23,16 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
 
-
-    @PostMapping("create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public boolean createEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
-        return employeeService.createEmployee(employeeDto);
-    }
-
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<EmployeesResponseDto> getAllEmployees() {
         return employeeService.getAllEmployees();
+    }
+
+    @PostMapping("updated")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateEmployees(@RequestBody UpdateEmployeeDto updateEmployeeDto) {
+        employeeService.updateEmployeeSkillsAndJobTitle(updateEmployeeDto);
     }
 
 }

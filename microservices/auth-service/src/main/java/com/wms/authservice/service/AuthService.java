@@ -75,7 +75,7 @@ public class AuthService {
             return Boolean.TRUE.equals(webClientBuilder
                     .build()
                     .post()
-                    .uri("http://EMPLOYEES-SERVICE/api/employees/create")
+                    .uri("http://EMPLOYEES-SERVICE/api/employees-internal/create")
                     .bodyValue(employeeDto)
                     .retrieve()
                     .bodyToMono(Boolean.class)

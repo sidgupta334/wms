@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -57,11 +58,21 @@ public class SkillsService {
         return mapToSkillResponse(skillRepository.findByExternalCode(externalId));
     }
 
+    public List<SkillResponse> getSkillsByExternalId(String[] externalIds) {
+        var keys = Arrays.stream(externalIds).map(externalId -> SKILL_KEY + externalId).toList();
+        final ValueOperations<String, Skill> operations = redisTemplate.opsForValue();
+        List<Skill> skills = operations.multiGet(keys);
+        if(skills == null || skills.isEmpty()) {
+            return skillRepository.findAllByExternalCode(externalIds).stream().map(this::mapToSkillResponse).toList();
+        }
+        return skills.stream().map(this::mapToSkillResponse).toList();
+    }
+
     private SkillResponse mapToSkillResponse(Skill skill) {
         if (skill == null) return null;
         return SkillResponse.builder()
                 .name(skill.getName())
-                .externalCode(skill.getExternalCode())
+                .id(skill.getExternalCode())
                 .build();
     }
 }
