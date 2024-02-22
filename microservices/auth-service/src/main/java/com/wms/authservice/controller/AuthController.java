@@ -1,5 +1,6 @@
 package com.wms.authservice.controller;
 
+import com.wms.authservice.dto.AuthUserResponse;
 import com.wms.authservice.dto.CreateEmployeesDto;
 import com.wms.authservice.dto.EmployeeCreateResultResponse;
 import com.wms.authservice.dto.LoginDto;
@@ -43,9 +44,14 @@ public class AuthController {
         return "Valid";
     }
 
-
-    @GetMapping("test")
-    public String securedTest() {
-        return "AVAILABLE";
+    @GetMapping("extract/{token}")
+    public AuthUserResponse extractTokenPayload(@PathVariable("token") String token) {
+        return authService.isLoggedInUserAdmin(token);
     }
+
+    @GetMapping("/email/{email}")
+    public AuthUserResponse getAuthByEmail(@PathVariable("email") String email) {
+        return authService.getAuthUserByEmail(email);
+    }
+
 }

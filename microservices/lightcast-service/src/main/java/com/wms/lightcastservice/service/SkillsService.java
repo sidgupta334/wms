@@ -5,14 +5,13 @@ import com.wms.lightcastservice.model.Skill;
 import com.wms.lightcastservice.repository.SkillRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -65,7 +64,7 @@ public class SkillsService {
         if(skills == null || skills.isEmpty()) {
             return skillRepository.findAllByExternalCode(externalIds).stream().map(this::mapToSkillResponse).toList();
         }
-        return skills.stream().map(this::mapToSkillResponse).toList();
+        return skills.stream().filter(Objects::nonNull).map(this::mapToSkillResponse).toList();
     }
 
     private SkillResponse mapToSkillResponse(Skill skill) {

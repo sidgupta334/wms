@@ -13,6 +13,7 @@ public class RouteValidator {
             "/api/auth/create",
             "/api/auth/login",
             "/api/auth/validate",
+            "/api/auth/email",
             "/eureka",
             "/api-docs"
     );

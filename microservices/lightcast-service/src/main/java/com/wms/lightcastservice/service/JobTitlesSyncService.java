@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -41,6 +42,7 @@ public class JobTitlesSyncService {
 
     private final String JOB_TITLE_KEY = "jobTitle_";
 
+    @Scheduled(cron = "0 45 23 * * *")
     public void syncJobTitles() {
         log.info("EMSI Job Titles sync started...");try {
             String authToken = lightcastAuthService.getAuthToken();

@@ -54,5 +54,3 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://eureka:password@localhost:8761/eureka
-  instance:
-    preferIpAddress: true

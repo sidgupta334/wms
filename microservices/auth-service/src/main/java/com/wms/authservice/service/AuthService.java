@@ -1,6 +1,7 @@
 package com.wms.authservice.service;
 
 import com.netflix.discovery.converters.Auto;
+import com.wms.authservice.dto.AuthUserResponse;
 import com.wms.authservice.dto.CreateEmployeesDto;
 import com.wms.authservice.dto.EmployeeCreateResultResponse;
 import com.wms.authservice.dto.EmployeeDto;
@@ -61,8 +62,7 @@ public class AuthService {
                 userCredentialRepository.save(userCredential);
                 emailService.sendPasswordOnEmail(userCredential, rawPassword);
                 response.setSuccessCount(response.getSuccessCount() + 1);
-            }
-            else {
+            } else {
                 response.setFailedCount(response.getFailedCount() + 1);
             }
         });
@@ -75,7 +75,7 @@ public class AuthService {
             return Boolean.TRUE.equals(webClientBuilder
                     .build()
                     .post()
-                    .uri("http://EMPLOYEES-SERVICE/api/employees-internal/create")
+                    .uri("http://EMPLOYEES-SERVICE/api/employees/create")
                     .bodyValue(employeeDto)
                     .retrieve()
                     .bodyToMono(Boolean.class)
@@ -92,6 +92,30 @@ public class AuthService {
 
     public void validateToken(String token) {
         jwtService.validateToken(token);
+    }
+
+
+
+    public AuthUserResponse getAuthUserByEmail(String email) {
+        Optional<UserCredential> userCredential = userCredentialRepository.findByEmail(email);
+        if (userCredential.isPresent()) {
+            UserCredential authUser = userCredential.get();
+            return mapToAuthUserResponse(authUser);
+        }
+        return null;
+    }
+
+    public AuthUserResponse isLoggedInUserAdmin(String token) {
+        token = token.substring(7);
+        return jwtService.extractJWTAdminPayloadData(token);
+    }
+
+    private AuthUserResponse mapToAuthUserResponse(UserCredential userCredential) {
+        return AuthUserResponse.builder()
+                .email(userCredential.getEmail())
+                .externalId(userCredential.getExternalId())
+                .isAdmin(userCredential.getIsAdmin())
+                .build();
     }
 
 }

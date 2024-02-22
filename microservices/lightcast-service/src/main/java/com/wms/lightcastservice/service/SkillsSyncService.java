@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -38,6 +39,7 @@ public class SkillsSyncService {
 
     private final String SKILL_KEY = "skill_";
 
+    @Scheduled(cron = "0 15 23 * * *")
     public void syncSkills() {
         log.info("EMSI Skills sync started...");
         try {

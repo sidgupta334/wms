@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -70,7 +67,6 @@ public class EmployeeService {
             if (employee == null || jobTitle == null || skills == null) {
                 return false;
             }
-            skills.removeAll(Collections.singleton(null));
             if (skills.size() < employeeDto.getSkillIds().length) {
                 return false;
             }
@@ -99,13 +95,46 @@ public class EmployeeService {
         if (employee.getJobTitleId() != null) {
             jobTitle = getJobTitleFromId(employee.getJobTitleId());
         }
+
+        List<EmployeeSkillsMapping> employeeSkillsMappings = employeeSkillMappingRepository.findAllByEmployee(employee);
+        String[] skillIds = employeeSkillsMappings.stream().map(EmployeeSkillsMapping::getSkillId).toArray(String[]::new);
+        List<JobTitleAndSkillResponseDto> skills = new ArrayList<>();
+        if (skillIds.length > 0) {
+            skills = getSkillsFromIds(skillIds);
+        }
+
+        boolean isAdmin = isUserAdmin(employee.getEmail());
+
         return EmployeesResponseDto.builder()
                 .entityId(employee.getEntityId())
                 .externalId(employee.getExternalId())
                 .email(employee.getEmail())
                 .name(employee.getName())
                 .jobTitle(jobTitle)
+                .skills(skills)
+                .isAdmin(isAdmin)
                 .build();
+    }
+
+    public AuthUserResponse getLoggedInUser(String token) {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://AUTH-SERVICE/api/auth/extract/" + token)
+                .retrieve()
+                .bodyToMono(AuthUserResponse.class)
+                .block();
+    }
+
+    private boolean isUserAdmin(String email) {
+        AuthUserResponse userResponse = webClientBuilder.build()
+                .get()
+                .uri("http://AUTH-SERVICE/api/auth/email/" + email)
+                .retrieve()
+                .bodyToMono(AuthUserResponse.class)
+                .block();
+
+        if (userResponse == null) return false;
+        return userResponse.isAdmin();
     }
 
     private List<JobTitleAndSkillResponseDto> getSkillsFromIds(String[] ids) {

@@ -31,7 +31,7 @@ public class AuthConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/api/auth/create", "/api/auth/login", "/api/auth/validate/{token}")
+                .authorizeHttpRequests(request -> request.anyRequest()
                         .permitAll())
                 .build();
     }

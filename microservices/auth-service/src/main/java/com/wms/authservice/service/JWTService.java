@@ -1,5 +1,7 @@
 package com.wms.authservice.service;
 
+import com.wms.authservice.dto.AuthUserResponse;
+import com.wms.authservice.model.UserCredential;
 import com.wms.authservice.repository.UserCredentialRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -7,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class JWTService {
@@ -30,8 +34,30 @@ public class JWTService {
                 .parseClaimsJws(token);
     }
 
+    public AuthUserResponse extractJWTAdminPayloadData(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return AuthUserResponse.builder()
+                .email(claims.get("email", String.class))
+                .isAdmin(claims.get("isAdmin", Boolean.class))
+                .externalId(claims.get("externalId", String.class))
+                .build();
+    }
+
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
+        Optional<UserCredential> userCredentialOptional = userCredentialRepository.findByEmail(email);
+        if (userCredentialOptional.isEmpty()) {
+            throw new ValidationException("No user found!!!");
+        }
+        UserCredential userCredential = userCredentialOptional.get();
+        claims.put("email", userCredential.getEmail());
+        claims.put("isAdmin", userCredential.getIsAdmin());
+        claims.put("externalId", userCredential.getExternalId());
         claims.put("user", userCredentialRepository.findByEmail(email));
         return createToken(claims, email);
     }
@@ -41,7 +67,7 @@ public class JWTService {
                 .claims(claims)
                 .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000000 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + 100 * 60 * 24))
                 .signWith(getSignKey())
                 .compact();
     }
