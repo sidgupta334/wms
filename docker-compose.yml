@@ -19,5 +19,22 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=password
+  elasticsearch:
+    image: elasticsearch:8.12.1
+    environment:
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=elasticPassword
+      - xpack.security.enabled=true
+      - SYSCTL_CAP_NET_ADMIN=1
+      - VM_MAX_MAP_COUNT=262144
+      - "ES_JAVA_OPTS=-Xms1500m -Xmx1500m"
+      - discovery.type=single-node
+      - bootstrap.memory_lock=false
+    mem_limit: 2g
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
 volumes:
   wms-data:
+  elasticsearch-data:
