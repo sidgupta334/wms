@@ -30,6 +30,13 @@ spring:
           filters:
             - AuthenticationFilter
 
+        - id: RECOMMENDATION-SERVICE
+          uri: lb://RECOMMENDATION-SERVICE
+          predicates:
+            - Path=/api/search/**
+          filters:
+            - AuthenticationFilter
+
 
 
 # ========================================

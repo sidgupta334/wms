@@ -2,6 +2,7 @@ package com.wms.lightcastservice.service;
 
 import com.wms.lightcastservice.dto.LightcastAuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -11,7 +12,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class LightcastAuthService {
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    @Qualifier("webClientBuilderForExternalApi")
+    private WebClient.Builder webClientBuilderForExternalApi;
 
     @Value("${app.lightcast.authUrl}")
     private String authUrl;
@@ -26,7 +28,7 @@ public class LightcastAuthService {
     private String scope;
 
     public String getAuthToken() {
-        LightcastAuthResponse response = webClientBuilder.build().post()
+        LightcastAuthResponse response = webClientBuilderForExternalApi.build().post()
                 .uri(authUrl)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(BodyInserters.fromValue("client_id=" + clientId + "&client_secret=" + secret + "&grant_type=client_credentials&scope=" + scope))

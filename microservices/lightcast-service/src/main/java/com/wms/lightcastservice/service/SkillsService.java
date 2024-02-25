@@ -36,32 +36,15 @@ public class SkillsService {
     }
 
     public List<SkillResponse> getAllSkills() {
-        final ValueOperations<String, Skill> operations = redisTemplate.opsForValue();
-        Set<String> keys =  redisTemplate.keys(SKILL_KEY + "*");
-        List<Skill> skills = operations.multiGet(keys);
-        if (skills == null || skills.isEmpty()) {
-            skills = skillRepository.findAll();
-        }
+        List<Skill> skills = skillRepository.findAll();
         return skills.stream().map(this::mapToSkillResponse).toList();
-    }
-
-    public SkillResponse getSkillByExternalId(String externalId) {
-        var key = SKILL_KEY + externalId;
-        final ValueOperations<String, Skill> operations = redisTemplate.opsForValue();
-        final boolean hasKey = Boolean.TRUE.equals(redisTemplate.hasKey(key));
-        if (hasKey) {
-            final Skill skill = operations.get(key);
-            log.info("Fetching from Cache..." + key);
-            return mapToSkillResponse(skill);
-        }
-        return mapToSkillResponse(skillRepository.findByExternalCode(externalId));
     }
 
     public List<SkillResponse> getSkillsByExternalId(String[] externalIds) {
         var keys = Arrays.stream(externalIds).map(externalId -> SKILL_KEY + externalId).toList();
         final ValueOperations<String, Skill> operations = redisTemplate.opsForValue();
         List<Skill> skills = operations.multiGet(keys);
-        if(skills == null || skills.isEmpty()) {
+        if (skills == null || skills.isEmpty()) {
             return skillRepository.findAllByExternalCode(externalIds).stream().map(this::mapToSkillResponse).toList();
         }
         return skills.stream().filter(Objects::nonNull).map(this::mapToSkillResponse).toList();

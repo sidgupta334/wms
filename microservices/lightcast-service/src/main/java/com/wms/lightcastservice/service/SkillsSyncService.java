@@ -2,14 +2,17 @@ package com.wms.lightcastservice.service;
 
 import com.wms.lightcastservice.dto.EmsiApiResponse;
 import com.wms.lightcastservice.dto.EmsiSkillResponse;
+import com.wms.lightcastservice.dto.SkillJobTitleReindex;
 import com.wms.lightcastservice.model.Skill;
 import com.wms.lightcastservice.repository.SkillRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
@@ -20,7 +23,13 @@ import java.util.stream.Collectors;
 public class SkillsSyncService {
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    @Qualifier("webClientBuilderForServices")
+    private WebClient.Builder webClientBuilderForServices;
+
+    @Autowired
+    @Qualifier("webClientBuilderForExternalApi")
+    private WebClient.Builder webClientBuilderForExternalApi;
+
     @Autowired
     private SkillRepository skillRepository;
 
@@ -43,18 +52,18 @@ public class SkillsSyncService {
     public void syncSkills() {
         log.info("EMSI Skills sync started...");
         try {
-        String authToken = lightcastAuthService.getAuthToken();
-            EmsiApiResponse response = webClientBuilder.build().get()
-                .uri(baseUrl + skillsUrl)
-                .header("Authorization", authToken)
-                .retrieve()
-                .bodyToMono(EmsiApiResponse.class)
-                .block();
+            String authToken = lightcastAuthService.getAuthToken();
+            EmsiApiResponse response = webClientBuilderForExternalApi.baseUrl(baseUrl).build().get()
+                    .uri(skillsUrl)
+                    .header("Authorization", authToken)
+                    .retrieve()
+                    .bodyToMono(EmsiApiResponse.class)
+                    .block();
             if (response == null) return;
             List<EmsiSkillResponse> emsiSkills = response.getData();
-        List<EmsiSkillResponse> skillsToSave = filterNewSkills(emsiSkills);
-        skillsToSave.forEach(this::saveSkill);
-        log.info("EMSI Skills sync completed successfully....");
+            List<EmsiSkillResponse> skillsToSave = filterNewSkills(emsiSkills);
+            skillsToSave.forEach(this::saveSkill);
+            log.info("EMSI Skills sync completed successfully....");
         } catch (Exception e) {
             log.error("Something went wrong while syncing skills...", e.fillInStackTrace());
         }
@@ -68,7 +77,11 @@ public class SkillsSyncService {
                 .build();
 
         skillRepository.save(skill);
+        log.info("Skill with id: " + skill.getExternalCode() + " saved in DB");
+        indexSkill(skill);
+        log.info("Skill with id: " + skill.getExternalCode() + " saved in Elasticsearch");
         redisTemplate.opsForValue().set(SKILL_KEY + skill.getExternalCode(), skill);
+        log.info("Skill with id: " + skill.getExternalCode() + " saved in Cache");
         log.info("Skill with id: " + skillData.getId() + " saved successfully...");
     }
 
@@ -80,5 +93,26 @@ public class SkillsSyncService {
 
     public List<Skill> getAllExistingSkills() {
         return skillRepository.findAll();
+    }
+
+
+    private void indexSkill(Skill skill) {
+        SkillJobTitleReindex skillReindex = SkillJobTitleReindex.builder()
+                .externalId(skill.getExternalCode())
+                .name(skill.getName())
+                .build();
+        try {
+            webClientBuilderForServices.baseUrl("http://RECOMMENDATION-SERVICE").build()
+                    .post()
+                    .uri("/api/search/skills/sync")
+                    .body(BodyInserters.fromValue(skillReindex))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+        } catch (Exception e) {
+            log.error("Something went wrong while indexing skill..." + e);
+        }
+
     }
 }

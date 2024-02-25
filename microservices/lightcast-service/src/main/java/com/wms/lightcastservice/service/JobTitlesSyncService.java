@@ -2,15 +2,18 @@ package com.wms.lightcastservice.service;
 
 import com.wms.lightcastservice.dto.EmsiApiResponse;
 import com.wms.lightcastservice.dto.EmsiSkillResponse;
+import com.wms.lightcastservice.dto.SkillJobTitleReindex;
 import com.wms.lightcastservice.model.JobTitle;
 import com.wms.lightcastservice.model.Skill;
 import com.wms.lightcastservice.repository.JobTitleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Date;
@@ -23,7 +26,13 @@ import java.util.stream.Collectors;
 public class JobTitlesSyncService {
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    @Qualifier("webClientBuilderForServices")
+    private WebClient.Builder webClientBuilderForServices;
+
+    @Autowired
+    @Qualifier("webClientBuilderForExternalApi")
+    private WebClient.Builder webClientBuilderForExternalApi;
+
 
     @Autowired
     private JobTitleRepository jobTitleRepository;
@@ -46,8 +55,8 @@ public class JobTitlesSyncService {
     public void syncJobTitles() {
         log.info("EMSI Job Titles sync started...");try {
             String authToken = lightcastAuthService.getAuthToken();
-            EmsiApiResponse response = webClientBuilder.build().get()
-                    .uri(baseUrl + jobTitlesUrl)
+            EmsiApiResponse response = webClientBuilderForExternalApi.baseUrl(baseUrl).build().get()
+                    .uri(jobTitlesUrl)
                     .header("Authorization", authToken)
                     .retrieve()
                     .bodyToMono(EmsiApiResponse.class)
@@ -70,7 +79,11 @@ public class JobTitlesSyncService {
                 .build();
 
         jobTitleRepository.save(jobTitle);
+        log.info("Job Title with id: " + jobTitle.getExternalCode() + " saved in DB");
+        indexJobTitle(jobTitle);
+        log.info("Job Title with id: " + jobTitle.getExternalCode() + " saved in Elasticsearch");
         redisTemplate.opsForValue().set(JOB_TITLE_KEY + jobTitle.getExternalCode(), jobTitle);
+        log.info("Job Title with id: " + jobTitle.getExternalCode() + " saved in Cache");
         log.info("Job Title with id: " + jobTitleData.getId() + " saved successfully...");
     }
 
@@ -78,5 +91,24 @@ public class JobTitlesSyncService {
         List<JobTitle> existingJobTitles = jobTitleRepository.findAll();
         Set<String> externalCodeSet = existingJobTitles.stream().map(JobTitle::getExternalCode).collect(Collectors.toSet());
         return jobTitlesToSave.stream().filter(jobTitle -> !externalCodeSet.contains(jobTitle.getId())).toList();
+    }
+
+    private void indexJobTitle(JobTitle jobTitle) {
+        SkillJobTitleReindex jobTitleReindex = SkillJobTitleReindex.builder()
+                .externalId(jobTitle.getExternalCode())
+                .name(jobTitle.getName())
+                .build();
+
+        try {
+            webClientBuilderForServices.baseUrl("http://RECOMMENDATION-SERVICE").build()
+                    .post()
+                    .uri("/api/search/job-titles/sync")
+                    .body(BodyInserters.fromValue(jobTitleReindex))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Something went wrong while indexing job title..." + e);
+        }
     }
 }

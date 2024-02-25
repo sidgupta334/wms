@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/employees-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/employees-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/lightcast-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/lightcast-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/microservices.iml" filepath="$PROJECT_DIR$/microservices.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/recommedation-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/recommedation-service.main.iml" />
     </modules>
   </component>
 </project>

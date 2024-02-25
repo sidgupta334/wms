@@ -36,12 +36,7 @@ public class JobTitlesService {
     }
 
     public List<JobTitleResponse> getAllJobTitles() {
-        final ValueOperations<String, JobTitle> operations = redisTemplate.opsForValue();
-        Set<String> keys = redisTemplate.keys(JOB_TITLE_KEY + "*");
-        List<JobTitle> jobTitles = operations.multiGet(keys);
-        if (jobTitles == null || jobTitles.isEmpty()) {
-            jobTitles = jobTitleRepository.findAll();
-        }
+        List<JobTitle> jobTitles = jobTitleRepository.findAll();
         return jobTitles.stream().map(this::mapToJobTitleResponse).toList();
     }
 

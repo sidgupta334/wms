@@ -22,9 +22,6 @@ services:
   elasticsearch:
     image: elasticsearch:8.12.1
     environment:
-      - ELASTIC_USER=elastic
-      - ELASTIC_PASSWORD=elasticPassword
-      - xpack.security.enabled=true
       - SYSCTL_CAP_NET_ADMIN=1
       - VM_MAX_MAP_COUNT=262144
       - "ES_JAVA_OPTS=-Xms1500m -Xmx1500m"
