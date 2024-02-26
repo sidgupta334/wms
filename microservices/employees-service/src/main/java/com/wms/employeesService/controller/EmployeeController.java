@@ -32,6 +32,12 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
+    @GetMapping("/internal")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> getAllEmployeesForInternalUse() {
+        return ResponseEntity.ok(employeeService.getAllEmployees());
+    }
+
     @PutMapping("update")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> updateEmployees(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody UpdateEmployeeDto updateEmployeeDto) {

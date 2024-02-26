@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
@@ -46,6 +47,9 @@ public class EmployeeService {
         try {
             employeeRepository.save(employee);
             log.info("Employee with external Id: " + employeeDto.getExternalId() + " saved successfully...");
+            boolean isUserAdmin = isUserAdmin(employee.getEmail());
+            indexEmployee(employee, isUserAdmin);
+            log.info("Employee " + employee.getExternalId() + " indexed successfully...");
             return true;
         } catch (Exception e) {
             log.error("Something went wrong while creating employee..." + e);
@@ -68,6 +72,7 @@ public class EmployeeService {
                 return false;
             }
             if (skills.size() < employeeDto.getSkillIds().length) {
+                log.error("Some skills are invalid in the request");
                 return false;
             }
 
@@ -82,6 +87,10 @@ public class EmployeeService {
             }).toList();
 
             employeeSkillMappingRepository.saveAll(employeeSkillsMappings);
+            List<String> skillIds = employeeSkillsMappings.stream().map(EmployeeSkillsMapping::getSkillId).toList();
+            boolean isAdmin = isUserAdmin(employee.getEmail());
+            employee.setSkillIds(skillIds);
+            indexEmployee(employee, isAdmin);
             return true;
 
         } catch (Exception e) {
@@ -156,5 +165,32 @@ public class EmployeeService {
                 .bodyToMono(JobTitleAndSkillResponseDto.class)
                 .block();
     }
+
+    private void indexEmployee(Employee employee, boolean isAdmin) {
+        String jobTitleId = employee.getJobTitleId() != null ? employee.getJobTitleId() : null;
+        List<String> skillIds = employee.getSkillIds() != null ? employee.getSkillIds() : new ArrayList<>();
+        EmployeeIndexRequest employeeIndexRequest = EmployeeIndexRequest.builder()
+                .externalId(employee.getExternalId())
+                .name(employee.getName())
+                .isAdmin(isAdmin)
+                .email(employee.getEmail())
+                .jobTitleId(jobTitleId)
+                .skillIds(skillIds)
+                .build();
+
+        try {
+            webClientBuilder.baseUrl("http://RECOMMENDATION-SERVICE").build()
+                    .post()
+                    .uri("/api/search/employees/sync")
+                    .body(BodyInserters.fromValue(employeeIndexRequest))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Something went wrong while indexing skill..." + e);
+        }
+    }
+
+
 
 }

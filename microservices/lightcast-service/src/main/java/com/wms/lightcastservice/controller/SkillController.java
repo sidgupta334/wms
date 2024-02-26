@@ -23,7 +23,6 @@ public class SkillController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<SkillResponse> getAllSkills() {
         return skillsService.getAllSkills();
     }
