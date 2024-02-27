@@ -1,0 +1,30 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.carousel {
+  height: 100%;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  position: relative;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
