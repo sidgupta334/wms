@@ -1,6 +1,7 @@
 package com.wms.praise.service;
 
 import com.wms.praise.config.WebClientConfig;
+import com.wms.praise.dto.AuthUserResponse;
 import com.wms.praise.dto.PraiseDto;
 import com.wms.praise.dto.PraiseResponseDto;
 import com.wms.praise.model.Praise;
@@ -9,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,9 @@ public class PraiseService {
 
     @Autowired
     private WebClientConfig webClientConfig;
+
+    @Autowired
+    private WebClient.Builder webClientBuilder;
     @Transactional
     public boolean createPraise(PraiseDto praiseDto) {
         Praise praise = new Praise().builder()
@@ -55,5 +60,14 @@ public class PraiseService {
                 .giver_id(praise.getGiver_id())
                 .receiver_id(praise.getReceiver_id())
                 .build();
+    }
+    public AuthUserResponse getLoggedInUser(String token)
+    {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://AUTH-SERVICE/api/auth/extract/" + token)
+                .retrieve()
+                .bodyToMono(AuthUserResponse.class)
+                .block();
     }
 }
