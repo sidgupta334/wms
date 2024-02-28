@@ -37,6 +37,13 @@ spring:
           filters:
             - AuthenticationFilter
 
+        - id: OPPORTUNITY-SERVICE
+          uri: lb://OPPORTUNITY-SERVICE
+          predicates:
+            - Path=/api/opportunity/**
+          filters:
+            - AuthenticationFilter
+
 
 
 # ========================================
