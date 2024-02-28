@@ -1,6 +1,7 @@
 package com.wms.opportunity.service;
 
 import com.wms.opportunity.config.WebClientConfig;
+import com.wms.opportunity.dto.AuthOpportunityResponse;
 import com.wms.opportunity.dto.OpportunityDto;
 import com.wms.opportunity.dto.OpportunityResponseDto;
 import com.wms.opportunity.model.Opportunity;
@@ -9,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,9 @@ public class OpportunityService {
 
     @Autowired
     private WebClientConfig webClientConfig;
+
+    @Autowired
+    private WebClient.Builder webClientBuilder;
     @Transactional
     public boolean createOpportunity(OpportunityDto opportunityDto) {
         Opportunity opportunity = new Opportunity().builder()
@@ -56,5 +61,15 @@ public class OpportunityService {
                 .job_title_id(opportunity.getJob_title_id())
                 .creator_id(opportunity.getCreator_id())
                 .build();
+    }
+
+    public AuthOpportunityResponse getLoggedInUser(String token)
+    {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://AUTH-SERVICE/api/auth/extract/" + token)
+                .retrieve()
+                .bodyToMono(AuthOpportunityResponse.class)
+                .block();
     }
 }
