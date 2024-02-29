@@ -20,11 +20,11 @@ public class Endorsement {
     private String entityId;
 
     @Column(nullable = false)
-    private String skill_id;
+    private String skillId;
     @Column(nullable = false)
-    private String giver_id;
+    private String giverId;
     @Column(nullable = false)
-    private String receiver_id;
+    private String receiveId;
     private Date timestamp;
 
 }

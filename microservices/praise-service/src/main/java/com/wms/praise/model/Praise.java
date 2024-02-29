@@ -22,10 +22,10 @@ public class Praise {
     private String title;
 
     @Column(nullable = false)
-    private String giver_id;
+    private String giverId;
 
     @Column(nullable = false)
-    private String receiver_id;
+    private String receiverId;
 
     private String description;
     private Date timestamp;

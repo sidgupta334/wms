@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class AuthUserResponse {
-    private String giver_id;
-    private String receiver_id;
+    private String giverId;
+    private String receiverId;
     private boolean isValid;
 }

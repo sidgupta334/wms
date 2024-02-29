@@ -14,7 +14,7 @@ import java.util.Date;
 public class PraiseResponseDto {
     private String entityId;
     private String title;
-    private String giver_id;
-    private String receiver_id;
+    private String giverId;
+    private String receiverId;
     private String description;
 }

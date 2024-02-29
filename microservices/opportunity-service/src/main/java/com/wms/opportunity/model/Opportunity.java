@@ -25,7 +25,7 @@ public class Opportunity {
     private String jobTitleId;
 
     @Column(nullable = false)
-    private String creator_id;
+    private String creatorId;
 
     private String description;
     private Date timestamp;

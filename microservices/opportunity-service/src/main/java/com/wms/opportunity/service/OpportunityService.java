@@ -33,7 +33,7 @@ public class OpportunityService {
                 .title(opportunityDto.getTitle())
                 .description(opportunityDto.getDescription())
                 .jobTitleId(opportunityDto.getJob_title_id())
-                .creator_id(opportunityDto.getCreator_id())
+                .creatorId(opportunityDto.getCreator_id())
                 .timestamp(new Date())
                 .build();
 
@@ -59,7 +59,7 @@ public class OpportunityService {
                 .title(opportunity.getTitle())
                 .description(opportunity.getDescription())
                 .job_title_id(opportunity.getJobTitleId())
-                .creator_id(opportunity.getCreator_id())
+                .creator_id(opportunity.getCreatorId())
                 .build();
     }
 

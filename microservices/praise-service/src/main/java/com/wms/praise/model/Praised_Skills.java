@@ -19,8 +19,8 @@ public class Praised_Skills {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
 
-    private String praise_id;
+    private String praiseId;
     @Column(nullable = false)
-    private String skill_id;
+    private String skillId;
     private Date timestamp;
 }
