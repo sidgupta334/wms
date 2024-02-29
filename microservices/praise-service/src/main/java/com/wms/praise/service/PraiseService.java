@@ -28,7 +28,8 @@ public class PraiseService {
     private WebClient.Builder webClientBuilder;
     @Transactional
     public boolean createPraise(PraiseDto praiseDto) {
-        Praise praise = new Praise().builder()
+
+        Praise praise = Praise.builder()
                 .title(praiseDto.getTitle())
                 .description(praiseDto.getDescription())
                 .giverId(praiseDto.getGiverId())
@@ -61,6 +62,7 @@ public class PraiseService {
                 .receiverId(praise.getReceiverId())
                 .build();
     }
+
     public AuthUserResponse getLoggedInUser(String token)
     {
         return webClientBuilder.build()

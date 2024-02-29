@@ -105,7 +105,7 @@ public class AuthService {
         return null;
     }
 
-    public AuthUserResponse isLoggedInUserAdmin(String token) {
+    public AuthUserResponse extractUserInfo(String token) {
         token = token.substring(7);
         return jwtService.extractJWTAdminPayloadData(token);
     }

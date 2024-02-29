@@ -10,7 +10,7 @@ For developing frontend SPA, we use HTML5, CSS, Typescript language and React as
 
 ## BACKEND:
 
-Primarily it uses Microservices architecture to decouple most of the services. The tech stack to build these services includes Java 17, Spring Boot, JPA, Hibernate, Spring Cloud (For API Gateway), Eureka (For service discovery), Keycloak (For authentication and authorization)
+Primarily it uses Microservices architecture to decouple most of the services. The tech stack to build these services includes Java 17, Spring Boot, JPA, Hibernate, Spring Cloud (For API Gateway), Eureka (For service discovery), Spring Security
 
 ## DATASTORES:
 
