@@ -16,9 +16,6 @@ const useGetMyProfile = (options: UseQueryOptions = {}) => {
   const queryResponse = useQuery(queryKey, getProfileApi, {
     ...options,
     refetchOnMount: false,
-    select: (response: any) => {
-      return response.data;
-    },
   });
 
   useEffect(() => {
