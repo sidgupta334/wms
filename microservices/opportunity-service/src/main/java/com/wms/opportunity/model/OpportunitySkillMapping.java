@@ -18,7 +18,6 @@ public class OpportunitySkillMapping {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
     private String opportunityId;
-    @Column(nullable = false)
     private String skillId;
     private Date timestamp;
 }
