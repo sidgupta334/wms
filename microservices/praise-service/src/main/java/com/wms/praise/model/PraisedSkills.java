@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Data
-public class Praised_Skills {
+public class PraisedSkills {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
