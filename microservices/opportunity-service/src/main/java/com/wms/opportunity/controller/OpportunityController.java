@@ -21,7 +21,7 @@ public class OpportunityController {
 
     @GetMapping("/get")
     @ResponseStatus(HttpStatus.OK)
-    public List<OpportunityResponseDto> getAllOpportunities(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+    public List<OpportunityResponseDto> getAllOpportunities() {
         return opportunityService.getAllOpportunity();
     }
     @PostMapping("/create")
