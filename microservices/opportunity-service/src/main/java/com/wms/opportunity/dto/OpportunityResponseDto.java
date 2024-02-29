@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class OpportunityResponseDto {
     private String entityId;
     private String title;
-    private String job_title_id;
-    private String creator_id;
+    private String jobTitleId;
+    private String creatorId;
     private String description;
 }

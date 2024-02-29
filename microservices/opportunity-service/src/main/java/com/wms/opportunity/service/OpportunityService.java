@@ -32,14 +32,14 @@ public class OpportunityService {
         Opportunity opportunity = new Opportunity().builder()
                 .title(opportunityDto.getTitle())
                 .description(opportunityDto.getDescription())
-                .job_title_id(opportunityDto.getJob_title_id())
-                .creator_id(opportunityDto.getCreator_id())
+                .jobTitleId(opportunityDto.getJobTitleId())
+                .creatorId(opportunityDto.getCreatorId())
                 .timestamp(new Date())
                 .build();
 
         try {
             opportunityRepository.save(opportunity);
-            log.info("Opportunity with job title Id: " + opportunityDto.getJob_title_id()+"and creator id"+opportunityDto.getCreator_id() + " saved successfully...");
+            log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
             return true;
         } catch (Exception e) {
             log.error("Something went wrong while creating praise..." + e);
@@ -58,8 +58,8 @@ public class OpportunityService {
                 .entityId(opportunity.getEntityId())
                 .title(opportunity.getTitle())
                 .description(opportunity.getDescription())
-                .job_title_id(opportunity.getJob_title_id())
-                .creator_id(opportunity.getCreator_id())
+                .jobTitleId(opportunity.getJobTitleId())
+                .creatorId(opportunity.getCreatorId())
                 .build();
     }
 
@@ -71,5 +71,10 @@ public class OpportunityService {
                 .retrieve()
                 .bodyToMono(AuthOpportunityResponse.class)
                 .block();
+    }
+
+    public List<OpportunityResponseDto> getOpportunity(String id) {
+        List<Opportunity> opportunityList = opportunityRepository.findByJobTitleId(id);
+        return opportunityList.stream().map(this::mapToOpportunityResponseDto).toList();
     }
 }

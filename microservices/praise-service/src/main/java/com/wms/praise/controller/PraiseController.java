@@ -25,6 +25,18 @@ public class PraiseController {
         return praiseService.getAllPraise();
     }
 
+    @GetMapping("/get/receiver/{receiverId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PraiseResponseDto>  getReceiverPraises(@PathVariable String receiverId) {
+        return praiseService.getReceiverPraise(receiverId);
+    }
+
+    @GetMapping("/get/giver/{giverId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PraiseResponseDto>  getGiverPraises(@PathVariable String giverId) {
+        return praiseService.getGiverPraise(giverId);
+    }
+
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public boolean createPraise(@Valid @RequestBody PraiseDto praiseDto) {

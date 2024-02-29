@@ -1,4 +1,4 @@
-package com.wms.opportunity.model;
+package com.wms.praise.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,14 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Data
-public class Opportunity_Skill_Mapping {
+public class PraisedSkills {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
-    private String opportunity_id;
+
+    private String praiseId;
     @Column(nullable = false)
-    private String skill_id;
+    private String skillId;
     private Date timestamp;
 }

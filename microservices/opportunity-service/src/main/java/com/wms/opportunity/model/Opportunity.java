@@ -22,10 +22,10 @@ public class Opportunity {
     private String title;
 
     @Column(nullable = false)
-    private String job_title_id;
+    private String jobTitleId;
 
     @Column(nullable = false)
-    private String creator_id;
+    private String creatorId;
 
     private String description;
     private Date timestamp;

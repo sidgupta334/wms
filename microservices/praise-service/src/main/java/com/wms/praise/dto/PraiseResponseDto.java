@@ -1,12 +1,12 @@
 package com.wms.praise.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -15,7 +15,8 @@ import java.util.Date;
 public class PraiseResponseDto {
     private String entityId;
     private String title;
-    private String giver_id;
-    private String receiver_id;
+    private String giverId;
+    private String receiverId;
     private String description;
+    private List<GetSkills> skillsList;
 }

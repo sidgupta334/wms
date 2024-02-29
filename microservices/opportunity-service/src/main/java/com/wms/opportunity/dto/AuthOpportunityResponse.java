@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class AuthOpportunityResponse {
-    private String job_title_id;
-    private String creator_id;
+    private String jobTitleId;
+    private String creatorId;
     private boolean isValid;
 }

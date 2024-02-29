@@ -2,9 +2,16 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api-gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api-gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/discovery-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/discovery-server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/employees-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/employees-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lightcast-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/lightcast-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/opportunity-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/opportunity-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/praise-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/praise-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/praiseAndEndorsement.main.iml" filepath="$PROJECT_DIR$/.idea/modules/praiseAndEndorsement.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/praiseAndEndorsement.test.iml" filepath="$PROJECT_DIR$/.idea/modules/praiseAndEndorsement.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/recommedation-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/recommedation-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/wms.iml" filepath="$PROJECT_DIR$/.idea/wms.iml" />
     </modules>
   </component>
