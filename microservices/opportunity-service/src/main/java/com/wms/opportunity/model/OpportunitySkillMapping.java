@@ -13,12 +13,12 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Data
-public class Opportunity_Skill_Mapping {
+public class OpportunitySkillMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
-    private String opportunity_id;
+    private String opportunityId;
     @Column(nullable = false)
-    private String skill_id;
+    private String skillId;
     private Date timestamp;
 }
