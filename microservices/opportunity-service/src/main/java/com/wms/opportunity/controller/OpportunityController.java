@@ -21,12 +21,8 @@ public class OpportunityController {
 
     @GetMapping("/get")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> getAllOpportunities(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        AuthOpportunityResponse loggedInUser = opportunityService.getLoggedInUser(token);
-        if (!loggedInUser.isValid()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
-        }
-        return ResponseEntity.ok(opportunityService.getAllOpportunity());
+    public List<OpportunityResponseDto> getAllOpportunities(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        return opportunityService.getAllOpportunity();
     }
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
