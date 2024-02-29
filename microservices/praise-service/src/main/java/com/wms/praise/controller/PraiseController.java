@@ -21,13 +21,8 @@ public class PraiseController {
 
     @GetMapping("/get")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?>  getAllPraises(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-
-        AuthUserResponse loggedInUser = praiseService.getLoggedInUser(token);
-        if (!loggedInUser.isValid()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
-        }
-        return ResponseEntity.ok(praiseService.getAllPraise());
+    public List<PraiseResponseDto>  getAllPraises() {
+        return praiseService.getAllPraise();
     }
 
     @PostMapping("/create")
