@@ -4,4 +4,7 @@ export enum AppRoutesEnum {
 
   // ADMIN Routes
   ADMIN_HOME = '/admin',
+  ADMIN_PRAISES = '/admin/praises',
+  ADMIN_OPPORTUNITIES = 'admin/opportunities',
+  ADMIN_MANAGE = 'admin/manage',
 }

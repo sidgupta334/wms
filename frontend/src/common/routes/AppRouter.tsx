@@ -6,7 +6,7 @@ import { AppRoutesEnum } from './AppRoutes.enum';
 import LoggedInUserRoute from './LoggedInUserRoute';
 import HomePage from 'home/components/HomePage';
 import AdminRoute from './AdminRoute';
-import AdminPage from 'admin/components/AdminPage';
+import AdminHomePage from 'admin/components/AdminHomePage';
 
 const AppRouter: React.FC = () => {
   return (
@@ -19,7 +19,7 @@ const AppRouter: React.FC = () => {
           />
           <Route
             path={AppRoutesEnum.ADMIN_HOME}
-            element={<AdminRoute element={<AdminPage />} />}
+            element={<AdminRoute element={<AdminHomePage />} />}
           />
           <Route path={AppRoutesEnum.LOGIN} element={<LoginPage />} />
           <Route path="*" element={<Navigate to={AppRoutesEnum.HOME} />} />
