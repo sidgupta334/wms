@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,4 +18,5 @@ public class PraiseResponseDto {
     private String giverId;
     private String receiverId;
     private String description;
+    private List<GetSkills> skillsList;
 }

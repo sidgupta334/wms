@@ -31,14 +31,14 @@ public class PraiseService {
         Praise praise = new Praise().builder()
                 .title(praiseDto.getTitle())
                 .description(praiseDto.getDescription())
-                .giver_id(praiseDto.getGiver_id())
-                .receiver_id(praiseDto.getReceiver_id())
+                .giverId(praiseDto.getGiverId())
+                .receiverId(praiseDto.getReceiverId())
                 .timestamp(new Date())
                 .build();
 
         try {
             praiseRepository.save(praise);
-            log.info("Praise with giver Id: " + praiseDto.getGiver_id()+"and receiver_id "+praiseDto.getReceiver_id() + " saved successfully...");
+            log.info("Praise with giver Id: " + praiseDto.getGiverId()+"and receiver_id "+praiseDto.getReceiverId() + " saved successfully...");
             return true;
         } catch (Exception e) {
             log.error("Something went wrong while creating praise..." + e);
@@ -57,8 +57,8 @@ public class PraiseService {
                 .entityId(praise.getEntityId())
                 .title(praise.getTitle())
                 .description(praise.getDescription())
-                .giver_id(praise.getGiver_id())
-                .receiver_id(praise.getReceiver_id())
+                .giverId(praise.getGiverId())
+                .receiverId(praise.getReceiverId())
                 .build();
     }
     public AuthUserResponse getLoggedInUser(String token)
@@ -69,5 +69,15 @@ public class PraiseService {
                 .retrieve()
                 .bodyToMono(AuthUserResponse.class)
                 .block();
+    }
+
+    public List<PraiseResponseDto> getReceiverPraise(String receiver) {
+        List<Praise> praises = praiseRepository.findByReceiverId(receiver);
+        return praises.stream().map(this::mapToPraiseResponseDto).toList();
+    }
+
+    public List<PraiseResponseDto> getGiverPraise(String giver) {
+        List<Praise> praises = praiseRepository.findByGiverId(giver);
+        return praises.stream().map(this::mapToPraiseResponseDto).toList();
     }
 }
