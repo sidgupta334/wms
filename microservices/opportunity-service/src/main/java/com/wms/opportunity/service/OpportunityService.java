@@ -32,7 +32,7 @@ public class OpportunityService {
         Opportunity opportunity = new Opportunity().builder()
                 .title(opportunityDto.getTitle())
                 .description(opportunityDto.getDescription())
-                .job_title_id(opportunityDto.getJob_title_id())
+                .jobTitleId(opportunityDto.getJob_title_id())
                 .creator_id(opportunityDto.getCreator_id())
                 .timestamp(new Date())
                 .build();
@@ -58,7 +58,7 @@ public class OpportunityService {
                 .entityId(opportunity.getEntityId())
                 .title(opportunity.getTitle())
                 .description(opportunity.getDescription())
-                .job_title_id(opportunity.getJob_title_id())
+                .job_title_id(opportunity.getJobTitleId())
                 .creator_id(opportunity.getCreator_id())
                 .build();
     }
@@ -71,5 +71,10 @@ public class OpportunityService {
                 .retrieve()
                 .bodyToMono(AuthOpportunityResponse.class)
                 .block();
+    }
+
+    public List<OpportunityResponseDto> getOpportunity(String id) {
+        List<Opportunity> opportunityList = opportunityRepository.findByJobTitleId(id);
+        return opportunityList.stream().map(this::mapToOpportunityResponseDto).toList();
     }
 }

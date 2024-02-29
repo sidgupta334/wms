@@ -24,6 +24,13 @@ public class OpportunityController {
     public List<OpportunityResponseDto> getAllOpportunities() {
         return opportunityService.getAllOpportunity();
     }
+
+    @GetMapping("/get/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OpportunityResponseDto> getOpportunity(@PathVariable String id) {
+        return opportunityService.getOpportunity(id);
+    }
+
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public boolean createOpportunity(@Valid @RequestBody OpportunityDto opportunityDto) {
