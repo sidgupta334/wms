@@ -43,6 +43,7 @@ public class PraiseService {
         PraisedSkills praisedSkills = PraisedSkills.builder()
                 .praiseId(praise.getEntityId())
                 .skillId(praiseDto.getSkills())
+                .timestamp(new Date())
                 .build();
         praiseSkillsRepository.save(praisedSkills);
         try {

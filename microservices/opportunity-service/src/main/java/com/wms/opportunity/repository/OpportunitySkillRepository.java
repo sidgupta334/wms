@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface Opportunity_SkillRepository extends JpaRepository<OpportunitySkillMapping, String> {
+public interface OpportunitySkillRepository extends JpaRepository<OpportunitySkillMapping, String> {
 
 
+    OpportunitySkillMapping findByOpportunityId(String entity);
 }

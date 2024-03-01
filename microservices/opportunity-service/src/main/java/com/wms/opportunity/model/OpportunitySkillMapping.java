@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -18,6 +19,6 @@ public class OpportunitySkillMapping {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
     private String opportunityId;
-    private String skillId;
+    private List<String> skillId;
     private Date timestamp;
 }

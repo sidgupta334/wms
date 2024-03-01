@@ -5,7 +5,9 @@ import com.wms.opportunity.dto.AuthOpportunityResponse;
 import com.wms.opportunity.dto.OpportunityDto;
 import com.wms.opportunity.dto.OpportunityResponseDto;
 import com.wms.opportunity.model.Opportunity;
+import com.wms.opportunity.model.OpportunitySkillMapping;
 import com.wms.opportunity.repository.OpportunityRepository;
+import com.wms.opportunity.repository.OpportunitySkillRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class OpportunityService {
     private OpportunityRepository opportunityRepository;
 
     @Autowired
+    private OpportunitySkillRepository opportunitySkillRepository;
+    @Autowired
     private WebClientConfig webClientConfig;
 
     @Autowired
@@ -37,11 +41,16 @@ public class OpportunityService {
                 .creatorId(opportunityDto.getCreatorId())
                 .timestamp(new Date())
                 .build();
-        log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
 
         try {
             opportunityRepository.save(opportunity);
             log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
+            OpportunitySkillMapping opportunitySkillMapping = new OpportunitySkillMapping().builder()
+                    .opportunityId(opportunity.getEntityId())
+                    .skillId(opportunityDto.getSkills())
+                    .timestamp(new Date())
+                    .build();
+            opportunitySkillRepository.save(opportunitySkillMapping);
             return true;
         } catch (Exception e) {
             log.error("Something went wrong while creating praise..." + e);
@@ -56,13 +65,20 @@ public class OpportunityService {
     }
 
     private OpportunityResponseDto mapToOpportunityResponseDto(Opportunity opportunity) {
+        String entity = opportunity.getEntityId();
+        OpportunitySkillMapping opportunitySkills = getAllSkills(entity);
         return OpportunityResponseDto.builder()
                 .entityId(opportunity.getEntityId())
                 .title(opportunity.getTitle())
                 .description(opportunity.getDescription())
                 .jobTitleId(opportunity.getJobTitleId())
                 .creatorId(opportunity.getCreatorId())
+                .skills(opportunitySkills.getSkillId())
                 .build();
+    }
+
+    private OpportunitySkillMapping getAllSkills(String entity) {
+        return opportunitySkillRepository.findByOpportunityId(entity);
     }
 
     public AuthOpportunityResponse getLoggedInUser(String token)

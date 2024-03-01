@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -16,4 +18,5 @@ public class OpportunityDto {
     private String jobTitleId;
     private String creatorId;
     private String description;
+    private List<String> skills;
 }
