@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 
 const useRouter = () => {
   const navigate = useNavigate();
@@ -12,9 +12,17 @@ const useRouter = () => {
     navigate(-1);
   };
 
+  const navigateWithSearchParams = (route: string, searchParams: any) => {
+    navigate({
+      pathname: route,
+      search: `?${createSearchParams(searchParams)}`,
+    });
+  };
+
   return {
     redirectToRoute,
     goBack,
+    navigateWithSearchParams,
   };
 };
 

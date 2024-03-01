@@ -28,6 +28,10 @@ public class EmployeeService {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
+    public EmployeesResponseDto getEmployeeByExternalId(String externalId) {
+        return mapToEmployeeResponseDto(employeeRepository.findByExternalId(externalId));
+    }
+
     @Transactional
     public boolean createEmployee(EmployeeDto employeeDto) {
         Employee employee = Employee.builder()

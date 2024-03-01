@@ -38,6 +38,7 @@ const useSession = (allowRefetch = true) => {
     isAdmin: hasSession && profile?.admin,
     startSession,
     clearSession,
+    profile,
   };
 };
 

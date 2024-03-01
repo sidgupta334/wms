@@ -49,7 +49,7 @@ public class AuthController {
 
     @GetMapping("me")
     public ResponseEntity<?> getMyDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        AuthUserResponse user = authService.extractUserInfo(token);
+        EmployeesResponse user = authService.getMeDetails(token);
         return ResponseEntity.ok(user);
     }
 

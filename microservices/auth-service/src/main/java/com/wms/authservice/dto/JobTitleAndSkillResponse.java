@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
-public class AuthUserResponse {
-    private String email;
-    private String externalId;
+@Data
+public class JobTitleAndSkillResponse {
+    private String id;
     private String name;
-    private boolean isAdmin;
 }
