@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class AuthUserResponse {
-    private String giverId;
-    private String receiverId;
-    private boolean isValid;
+public class AuthUserResponses {
+    private String email;
+    private String externalId;
+    private boolean isAdmin;
 }

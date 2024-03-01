@@ -29,6 +29,7 @@ public class OpportunityService {
     private WebClient.Builder webClientBuilder;
     @Transactional
     public boolean createOpportunity(OpportunityDto opportunityDto) {
+        log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
         Opportunity opportunity = new Opportunity().builder()
                 .title(opportunityDto.getTitle())
                 .description(opportunityDto.getDescription())
@@ -36,6 +37,7 @@ public class OpportunityService {
                 .creatorId(opportunityDto.getCreatorId())
                 .timestamp(new Date())
                 .build();
+        log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
 
         try {
             opportunityRepository.save(opportunity);

@@ -11,10 +11,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PraiseDto {
-    private String title;
-    private String giverId;
-    private String receiverId;
-    private String description;
-    private List<String> skills;
+public class PraisedSkillsResponse {
+
+    private String praiseId;
+    private List<String> skillId;
 }

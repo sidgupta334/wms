@@ -44,6 +44,14 @@ spring:
           filters:
             - AuthenticationFilter
 
+        - id: PRAISEANDENDORSEMENT-SERVICE
+          uri: lb://PRAISEANDENDORSEMENT-SERVICE
+          predicates:
+            - Path=/api/praise/**
+            - Path=/api/endorsement/**
+          filters:
+            - AuthenticationFilter
+
 
 
 # ========================================

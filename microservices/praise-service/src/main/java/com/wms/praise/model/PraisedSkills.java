@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -18,9 +19,7 @@ public class PraisedSkills {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
-
     private String praiseId;
-    @Column(nullable = false)
-    private String skillId;
+    private List<String> skillId;
     private Date timestamp;
 }

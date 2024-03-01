@@ -1,11 +1,11 @@
 package com.wms.praise.service;
 
 import com.wms.praise.config.WebClientConfig;
-import com.wms.praise.dto.AuthUserResponse;
-import com.wms.praise.dto.PraiseDto;
-import com.wms.praise.dto.PraiseResponseDto;
+import com.wms.praise.dto.*;
 import com.wms.praise.model.Praise;
+import com.wms.praise.model.PraisedSkills;
 import com.wms.praise.repository.PraiseRepository;
+import com.wms.praise.repository.PraiseSkillsRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,9 @@ public class PraiseService {
     private PraiseRepository praiseRepository;
 
     @Autowired
+    private PraiseSkillsRepository praiseSkillsRepository;
+
+    @Autowired
     private WebClientConfig webClientConfig;
 
     @Autowired
@@ -36,9 +39,13 @@ public class PraiseService {
                 .receiverId(praiseDto.getReceiverId())
                 .timestamp(new Date())
                 .build();
-
+        praiseRepository.save(praise);
+        PraisedSkills praisedSkills = PraisedSkills.builder()
+                .praiseId(praise.getEntityId())
+                .skillId(praiseDto.getSkills())
+                .build();
+        praiseSkillsRepository.save(praisedSkills);
         try {
-            praiseRepository.save(praise);
             log.info("Praise with giver Id: " + praiseDto.getGiverId()+"and receiver_id "+praiseDto.getReceiverId() + " saved successfully...");
             return true;
         } catch (Exception e) {
@@ -54,22 +61,28 @@ public class PraiseService {
     }
 
     private PraiseResponseDto mapToPraiseResponseDto(Praise praise) {
+        String entity = praise.getEntityId();
+        PraisedSkills praisedSkills = getAllSkills(entity);
         return PraiseResponseDto.builder()
-                .entityId(praise.getEntityId())
+                .entityId(entity)
                 .title(praise.getTitle())
                 .description(praise.getDescription())
                 .giverId(praise.getGiverId())
                 .receiverId(praise.getReceiverId())
+                .skillsList(praisedSkills.getSkillId())
                 .build();
     }
-
-    public AuthUserResponse getLoggedInUser(String token)
+    public PraisedSkills getAllSkills(String praiseId)
+    {
+       return praiseSkillsRepository.findByPraiseId(praiseId);
+    }
+    public AuthUserResponses getLoggedInUser(String token)
     {
         return webClientBuilder.build()
                 .get()
                 .uri("http://AUTH-SERVICE/api/auth/extract/" + token)
                 .retrieve()
-                .bodyToMono(AuthUserResponse.class)
+                .bodyToMono(AuthUserResponses.class)
                 .block();
     }
 
@@ -81,5 +94,18 @@ public class PraiseService {
     public List<PraiseResponseDto> getGiverPraise(String giver) {
         List<Praise> praises = praiseRepository.findByGiverId(giver);
         return praises.stream().map(this::mapToPraiseResponseDto).toList();
+    }
+
+
+    public List<PraisedSkillsResponse> getPraisedSkills() {
+        List<PraisedSkills> praisedSkillsResponses = praiseSkillsRepository.findAll();
+        return praisedSkillsResponses.stream().map(this::mapToPraisedSkillsResponse).toList();
+    }
+
+    private PraisedSkillsResponse mapToPraisedSkillsResponse(PraisedSkills praisedSkills) {
+        return PraisedSkillsResponse.builder()
+                .praiseId(praisedSkills.getPraiseId())
+                .skillId(praisedSkills.getSkillId())
+                .build();
     }
 }
