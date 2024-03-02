@@ -1,9 +1,6 @@
 package com.wms.praise.controller;
 
-import com.wms.praise.dto.AuthUserResponses;
-import com.wms.praise.dto.PraiseDto;
-import com.wms.praise.dto.PraiseResponseDto;
-import com.wms.praise.dto.PraisedSkillsResponse;
+import com.wms.praise.dto.*;
 import com.wms.praise.model.PraisedSkills;
 import com.wms.praise.service.PraiseService;
 import jakarta.validation.Valid;
@@ -14,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/praise")
@@ -29,6 +27,20 @@ public class PraiseController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
         }
         return ResponseEntity.ok(praiseService.getAllPraise());
+    }
+
+    @PutMapping("update")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> updatePraise(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody UpdatePraiseDto updatePraiseDto) {
+        AuthUserResponses loggedInUser = praiseService.getLoggedInUser(token);
+        if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), updatePraiseDto.getGiverId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
+        }
+        boolean result = praiseService.updatePraisedSkills(updatePraiseDto);
+        if (result) {
+            return ResponseEntity.ok("Success");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
     }
 /*
     @GetMapping("get/praisedSkills")
@@ -57,7 +69,30 @@ public class PraiseController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public boolean createPraise(@Valid @RequestBody PraiseDto praiseDto) {
-        return praiseService.createPraise(praiseDto);
+    public ResponseEntity<?> createPraise(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody PraiseDto praiseDto) {
+        AuthUserResponses loggedInUser = praiseService.getLoggedInUser(token);
+        if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), praiseDto.getGiverId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
+        }
+        boolean result = praiseService.createPraise(praiseDto);
+        if (result) {
+            return ResponseEntity.ok("Success");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> deleteEndorsement(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody PraiseDeleteDto praiseDeleteDto)
+    {
+        AuthUserResponses loggedInUser = praiseService.getLoggedInUser(token);
+        if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), praiseDeleteDto.getGiverId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
+        }
+        boolean result = praiseService.deletePraise(praiseDeleteDto);
+        if (result) {
+            return ResponseEntity.ok("Success");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
     }
 }

@@ -14,5 +14,5 @@ import java.util.List;
 public class PraisedSkillsResponse {
 
     private String praiseId;
-    private List<String> skillId;
+    private String[] skillId;
 }

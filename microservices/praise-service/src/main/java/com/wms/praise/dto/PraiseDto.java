@@ -16,5 +16,5 @@ public class PraiseDto {
     private String giverId;
     private String receiverId;
     private String description;
-    private List<String> skills;
+    private String[] skills;
 }

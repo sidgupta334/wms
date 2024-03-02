@@ -24,7 +24,7 @@ public class Endorsement {
     @Column(nullable = false)
     private String giverId;
     @Column(nullable = false)
-    private String receiveId;
+    private String receiverId;
     private Date timestamp;
 
 }

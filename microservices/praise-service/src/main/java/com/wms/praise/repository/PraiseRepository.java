@@ -12,4 +12,6 @@ public interface PraiseRepository extends JpaRepository<Praise, String> {
 
 
     List<Praise> findByGiverId(String giver);
+
+    Praise findByEntityId(String entityId);
 }

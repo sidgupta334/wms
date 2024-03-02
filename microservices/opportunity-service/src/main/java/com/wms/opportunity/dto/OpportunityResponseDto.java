@@ -17,5 +17,5 @@ public class OpportunityResponseDto {
     private String jobTitleId;
     private String creatorId;
     private String description;
-    private List<String> skills;
+    private String[] skills;
 }

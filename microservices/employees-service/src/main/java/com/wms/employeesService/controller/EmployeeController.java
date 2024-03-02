@@ -21,7 +21,6 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> getAllEmployees(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {

@@ -20,6 +20,6 @@ public class PraisedSkills {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
     private String praiseId;
-    private List<String> skillId;
+    private String[] skillId;
     private Date timestamp;
 }

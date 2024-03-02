@@ -39,14 +39,15 @@ public class PraiseService {
                 .receiverId(praiseDto.getReceiverId())
                 .timestamp(new Date())
                 .build();
-        praiseRepository.save(praise);
-        PraisedSkills praisedSkills = PraisedSkills.builder()
-                .praiseId(praise.getEntityId())
-                .skillId(praiseDto.getSkills())
-                .timestamp(new Date())
-                .build();
-        praiseSkillsRepository.save(praisedSkills);
+
         try {
+            praiseRepository.save(praise);
+            PraisedSkills praisedSkills = PraisedSkills.builder()
+                    .praiseId(praise.getEntityId())
+                    .skillId(praiseDto.getSkills())
+                    .timestamp(new Date())
+                    .build();
+            praiseSkillsRepository.save(praisedSkills);
             log.info("Praise with giver Id: " + praiseDto.getGiverId()+"and receiver_id "+praiseDto.getReceiverId() + " saved successfully...");
             return true;
         } catch (Exception e) {
@@ -70,7 +71,7 @@ public class PraiseService {
                 .description(praise.getDescription())
                 .giverId(praise.getGiverId())
                 .receiverId(praise.getReceiverId())
-                .skillsList(praisedSkills.getSkillId())
+                .skills(praisedSkills.getSkillId())
                 .build();
     }
     public PraisedSkills getAllSkills(String praiseId)
@@ -108,5 +109,39 @@ public class PraiseService {
                 .praiseId(praisedSkills.getPraiseId())
                 .skillId(praisedSkills.getSkillId())
                 .build();
+    }
+
+    public boolean updatePraisedSkills(UpdatePraiseDto updatePraiseDto) {
+        try{
+            Praise praise = praiseRepository.findByEntityId(updatePraiseDto.getEntityId());
+            if(praise == null)
+            {
+                log.error("Opportunity is invalid in the request");
+                return false;
+            }
+
+            praise.setGiverId(updatePraiseDto.getGiverId());
+            praise.setReceiverId(updatePraiseDto.getReceiverId());
+            praiseRepository.save(praise);
+            String id= updatePraiseDto.getEntityId();
+            PraisedSkills praisedSkills = praiseSkillsRepository.findByPraiseId(id);
+            praisedSkills.setSkillId(updatePraiseDto.getSkill());
+            praiseSkillsRepository.save(praisedSkills);
+            return true;
+        }
+        catch (Exception e) {
+            log.error("Something went wrong while updating employee.." + e);
+            return false;
+        }
+    }
+
+    public boolean deletePraise(PraiseDeleteDto praiseDeleteDto) {
+        Praise praise = praiseRepository.findByEntityId(praiseDeleteDto.getEntityId());
+        if(praise == null)
+            return false;
+        PraisedSkills praisedSkills = praiseSkillsRepository.findByPraiseId(praise.getEntityId());
+        praiseRepository.delete(praise);
+        praiseSkillsRepository.delete(praisedSkills);
+        return true;
     }
 }

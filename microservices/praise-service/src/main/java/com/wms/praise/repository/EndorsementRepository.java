@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EndorsementRepository extends JpaRepository<Endorsement,String> {
+    Endorsement findByEntityId(String entityId);
 }
