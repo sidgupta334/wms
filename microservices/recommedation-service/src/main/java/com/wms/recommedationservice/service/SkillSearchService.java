@@ -46,11 +46,11 @@ public class SkillSearchService {
         List<JobTitleAndSkillResponseDto> skillsToReindex = Arrays.stream(getAllSkills()).toList();
         skillsToReindex.forEach(skill -> {
             try {
-            addSkill(SkillJobTitleRequest.builder()
-                    .name(skill.getName())
-                    .externalId(skill.getId())
-                    .build());
-            log.info("Skill " + skill.getId() + " reindexed...");
+                addSkill(SkillJobTitleRequest.builder()
+                        .name(skill.getName())
+                        .externalId(skill.getId())
+                        .build());
+                log.info("Skill " + skill.getId() + " reindexed...");
             } catch (Exception e) {
                 log.error("Something went wrong while reindexing " + skill.getId() + ", error: " + e);
             }
@@ -58,9 +58,17 @@ public class SkillSearchService {
         log.info("Skills reindex completed successfully...");
     }
 
-    public List<Skill> searchSkills(String query) {
+    public List<JobTitleAndSkillResponseDto> searchSkills(String query) {
         Pageable pageable = PageRequest.of(0, 100);
-        return skillRepository.findByNameContaining(query, pageable).stream().toList();
+        return mapToJobTitleAndSkillResponseDto(skillRepository.findByNameContaining(query, pageable).stream().toList());
+    }
+
+    private List<JobTitleAndSkillResponseDto> mapToJobTitleAndSkillResponseDto(List<Skill> skills) {
+        return skills.stream().map(skill -> JobTitleAndSkillResponseDto.builder()
+                .id(skill.getExternalCode())
+                .externalCode(skill.getExternalCode())
+                .name(skill.getName())
+                .build()).toList();
     }
 
     private JobTitleAndSkillResponseDto[] getAllSkills() {

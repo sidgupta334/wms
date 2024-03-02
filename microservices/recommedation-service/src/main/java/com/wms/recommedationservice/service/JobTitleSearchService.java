@@ -61,9 +61,17 @@ public class JobTitleSearchService {
         log.info("Job Titles reindex completed successfully...");
     }
 
-    public List<JobTitle> searchJobTitles(String query) {
+    public List<JobTitleAndSkillResponseDto> searchJobTitles(String query) {
         Pageable pageable = PageRequest.of(0, 100);
-        return jobTitleRepository.findByNameContaining(query, pageable).stream().toList();
+        return mapToJobTitleAndSkillResponseDto(jobTitleRepository.findByNameContaining(query, pageable).stream().toList());
+    }
+
+    private List<JobTitleAndSkillResponseDto> mapToJobTitleAndSkillResponseDto(List<JobTitle> jobTitles) {
+        return jobTitles.stream().map(skill -> JobTitleAndSkillResponseDto.builder()
+                .id(skill.getExternalCode())
+                .externalCode(skill.getExternalCode())
+                .name(skill.getName())
+                .build()).toList();
     }
 
     private JobTitleAndSkillResponseDto[] getAllJobTitles() {

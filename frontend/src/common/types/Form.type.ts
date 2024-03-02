@@ -14,7 +14,10 @@ export type InputValidationIndicatorProps = {
   isError: boolean;
 };
 
-export type UseFormProps<TFieldValues extends FieldValues = FieldValues, TContext = any> = _UseFormProps<TFieldValues, TContext> & {
+export type UseFormProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+> = _UseFormProps<TFieldValues, TContext> & {
   validationErrors?: ValidationError[];
   showMultipleMessages?: boolean;
 };
@@ -33,12 +36,13 @@ export type AutocompleteProps = Omit<
   name?: string;
   helperText?: string;
   customReadOnly?: boolean;
+  placeholder?: string;
+  children?: React.ReactNode;
   hasIconChip?: boolean;
   limit?: number;
   renderInput?: (params: AutocompleteRenderInputParams) => React.ReactNode;
   onChange?: (value: any) => void;
   getOptionAvatar?: (value: any) => void;
-  formFieldProps?: TextFieldProps;
   ChipComponent?: React.FC<any>;
   errorMessage?: string;
   errorsArray?: any[];

@@ -83,6 +83,8 @@ public class EmployeeService {
             employee.setJobTitleId(jobTitle.getId());
             employeeRepository.save(employee);
 
+            List<EmployeeSkillsMapping> existingSkillsMapping = employeeSkillMappingRepository.findAllByEmployee(employee);
+            existingSkillsMapping.forEach(mapping -> employeeSkillMappingRepository.delete(mapping));
             List<EmployeeSkillsMapping> employeeSkillsMappings = skills.stream().map(skill -> {
                 EmployeeSkillsMapping employeeSkillsMapping = new EmployeeSkillsMapping();
                 employeeSkillsMapping.setEmployee(employee);
@@ -194,7 +196,4 @@ public class EmployeeService {
             log.error("Something went wrong while indexing skill..." + e);
         }
     }
-
-
-
 }

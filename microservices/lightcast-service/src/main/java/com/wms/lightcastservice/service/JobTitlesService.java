@@ -49,6 +49,8 @@ public class JobTitlesService {
             log.info("Fetching from Cache..." + key);
             return mapToJobTitleResponse(jobTitle);
         }
+        JobTitle jobTitle = jobTitleRepository.findByExternalCode(externalCode);
+        jobTitlesSyncService.cacheJobTitle(jobTitle);
         return mapToJobTitleResponse(jobTitleRepository.findByExternalCode(externalCode));
     }
 

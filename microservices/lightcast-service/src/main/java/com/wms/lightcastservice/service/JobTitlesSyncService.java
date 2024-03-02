@@ -82,9 +82,13 @@ public class JobTitlesSyncService {
         log.info("Job Title with id: " + jobTitle.getExternalCode() + " saved in DB");
         indexJobTitle(jobTitle);
         log.info("Job Title with id: " + jobTitle.getExternalCode() + " saved in Elasticsearch");
-        redisTemplate.opsForValue().set(JOB_TITLE_KEY + jobTitle.getExternalCode(), jobTitle);
+        cacheJobTitle(jobTitle);
         log.info("Job Title with id: " + jobTitle.getExternalCode() + " saved in Cache");
         log.info("Job Title with id: " + jobTitleData.getId() + " saved successfully...");
+    }
+
+    public void cacheJobTitle(JobTitle jobTitle) {
+        redisTemplate.opsForValue().set(JOB_TITLE_KEY + jobTitle.getExternalCode(), jobTitle);
     }
 
     public List<EmsiSkillResponse> filterNewJobTitles(List<EmsiSkillResponse> jobTitlesToSave) {

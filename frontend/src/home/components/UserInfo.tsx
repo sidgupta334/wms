@@ -8,7 +8,7 @@ const UserInfo: React.FC<{ profile: any }> = ({ profile }) => {
     <Stack spacing={1}>
       <UserEmailLabel email={profile?.email} />
       {!!profile?.jobTitle && <UserJobTitle jobTitle={profile?.jobTitle?.name} />}
-      {!!profile?.skills && profile?.skills.length && <SkillList skills={profile.skills} />}
+      {!!profile?.skills && !!profile?.skills.length && <SkillList skills={profile.skills} />}
     </Stack>
   );
 };

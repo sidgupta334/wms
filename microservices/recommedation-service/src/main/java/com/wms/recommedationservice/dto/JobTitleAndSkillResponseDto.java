@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class JobTitleAndSkillResponseDto {
     private String id;
+    private String externalCode;
     private String name;
 }
