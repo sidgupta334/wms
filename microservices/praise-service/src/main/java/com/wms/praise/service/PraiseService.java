@@ -125,7 +125,7 @@ public class PraiseService {
             praiseRepository.save(praise);
             String id= updatePraiseDto.getEntityId();
             PraisedSkills praisedSkills = praiseSkillsRepository.findByPraiseId(id);
-            praisedSkills.setSkillId(updatePraiseDto.getSkill());
+            praisedSkills.setSkillId(updatePraiseDto.getSkills());
             praiseSkillsRepository.save(praisedSkills);
             return true;
         }

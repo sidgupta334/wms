@@ -11,7 +11,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/wms-auth
     username: root
-    password: password
+    password: Shrangika@13
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # =====================================

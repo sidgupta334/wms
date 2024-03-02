@@ -1,7 +1,6 @@
 package com.wms.opportunity.controller;
 
 import com.wms.opportunity.dto.*;
-import com.wms.opportunity.model.Opportunity;
 import com.wms.opportunity.repository.OpportunityRepository;
 import com.wms.opportunity.service.OpportunityService;
 import jakarta.validation.Valid;
@@ -55,7 +54,7 @@ public class OpportunityController {
         if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), opportunityDeleteDto.getCreatorId())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
         }
-        boolean result = opportunityService.deletePraise(opportunityDeleteDto);
+        boolean result = opportunityService.deleteOpportunity(opportunityDeleteDto);
         if (result) {
             return ResponseEntity.ok("Success");
         }

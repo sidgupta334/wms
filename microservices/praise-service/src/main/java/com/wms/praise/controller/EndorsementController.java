@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class EndorsementController {
 
     @Autowired
-    EndorsementRepository endorsementRepository;
-
-    @Autowired
     EndorsementService endorsementService;
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)

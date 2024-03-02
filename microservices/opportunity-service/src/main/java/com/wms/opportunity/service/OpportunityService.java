@@ -1,9 +1,7 @@
 package com.wms.opportunity.service;
 
 import com.wms.opportunity.config.WebClientConfig;
-import com.wms.opportunity.dto.AuthOpportunityResponse;
-import com.wms.opportunity.dto.OpportunityDto;
-import com.wms.opportunity.dto.OpportunityResponseDto;
+import com.wms.opportunity.dto.*;
 import com.wms.opportunity.model.Opportunity;
 import com.wms.opportunity.model.OpportunitySkillMapping;
 import com.wms.opportunity.repository.OpportunityRepository;
@@ -81,18 +79,52 @@ public class OpportunityService {
         return opportunitySkillRepository.findByOpportunityId(entity);
     }
 
-    public AuthOpportunityResponse getLoggedInUser(String token)
+    public AuthUserResponse getLoggedInUser(String token)
     {
         return webClientBuilder.build()
                 .get()
                 .uri("http://AUTH-SERVICE/api/auth/extract/" + token)
                 .retrieve()
-                .bodyToMono(AuthOpportunityResponse.class)
+                .bodyToMono(AuthUserResponse.class)
                 .block();
     }
 
     public List<OpportunityResponseDto> getOpportunity(String id) {
         List<Opportunity> opportunityList = opportunityRepository.findByJobTitleId(id);
         return opportunityList.stream().map(this::mapToOpportunityResponseDto).toList();
+    }
+
+    public boolean updateOpportunitySkills(UpdateOpportunityDto updateOpportunityDto) {
+        try{
+            Opportunity opportunity = opportunityRepository.findByEntityId(updateOpportunityDto.getEntityId());
+            if(opportunity == null)
+            {
+                log.error("Opportunity is invalid in the request");
+                return false;
+            }
+
+            opportunity.setJobTitleId(updateOpportunityDto.getJobTitleId());
+            opportunity.setCreatorId(updateOpportunityDto.getCreatorId());
+            opportunityRepository.save(opportunity);
+            String id= updateOpportunityDto.getEntityId();
+            OpportunitySkillMapping opportunitySkillMapping = opportunitySkillRepository.findByOpportunityId(id);
+            opportunitySkillMapping.setSkillId(updateOpportunityDto.getSkills());
+            opportunitySkillRepository.save(opportunitySkillMapping);
+            return true;
+        }
+        catch (Exception e) {
+            log.error("Something went wrong while updating employee.." + e);
+            return false;
+        }
+    }
+
+    public boolean deleteOpportunity(OpportunityDeleteDto opportunityDeleteDto) {
+        Opportunity opportunity = opportunityRepository.findByEntityId(opportunityDeleteDto.getEntityId());
+        if(opportunity == null)
+            return false;
+        OpportunitySkillMapping opportunitySkillMapping = opportunitySkillRepository.findByOpportunityId(opportunity.getEntityId());
+        opportunityRepository.delete(opportunity);
+        opportunitySkillRepository.delete(opportunitySkillMapping);
+        return true;
     }
 }
