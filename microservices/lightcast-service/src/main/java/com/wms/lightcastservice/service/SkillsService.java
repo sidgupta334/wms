@@ -50,8 +50,6 @@ public class SkillsService {
         return skills.stream().filter(Objects::nonNull).map(this::mapToSkillResponse).toList();
     }
 
-
-
     private SkillResponse mapToSkillResponse(Skill skill) {
         if (skill == null) return null;
         return SkillResponse.builder()

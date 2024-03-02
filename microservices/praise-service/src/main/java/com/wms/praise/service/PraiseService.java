@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,13 @@ public class PraiseService {
     @Transactional
     public boolean createPraise(PraiseDto praiseDto) {
 
+        List<JobTitleAndSkillResponseDto> skills = getSkillsFromIds(praiseDto.getSkills());
+
+        if (skills == null ||(skills.size() < praiseDto.getSkills().length))
+        {
+            log.error("Some skills are invalid in the request");
+            return false;
+        }
         Praise praise = Praise.builder()
                 .title(praiseDto.getTitle())
                 .description(praiseDto.getDescription())
@@ -119,7 +127,13 @@ public class PraiseService {
                 log.error("Opportunity is invalid in the request");
                 return false;
             }
+            List<JobTitleAndSkillResponseDto> skills = getSkillsFromIds(updatePraiseDto.getSkills());
 
+            if (skills == null ||(skills.size() < updatePraiseDto.getSkills().length))
+            {
+                log.error("Some skills are invalid in the request");
+                return false;
+            }
             praise.setGiverId(updatePraiseDto.getGiverId());
             praise.setReceiverId(updatePraiseDto.getReceiverId());
             praiseRepository.save(praise);
@@ -143,5 +157,16 @@ public class PraiseService {
         praiseRepository.delete(praise);
         praiseSkillsRepository.delete(praisedSkills);
         return true;
+    }
+    private List<JobTitleAndSkillResponseDto> getSkillsFromIds(String[] ids) {
+        GetSkillsRequest request = new GetSkillsRequest(ids);
+        JobTitleAndSkillResponseDto[] response = webClientBuilder.build().post()
+                .uri("http://LIGHTCAST-SERVICE/api/skills")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(JobTitleAndSkillResponseDto[].class)
+                .block();
+        if (response == null) return null;
+        return Arrays.stream(response).toList();
     }
 }

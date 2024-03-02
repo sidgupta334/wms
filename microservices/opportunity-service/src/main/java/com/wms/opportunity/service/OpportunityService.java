@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,14 @@ public class OpportunityService {
     private WebClient.Builder webClientBuilder;
     @Transactional
     public boolean createOpportunity(OpportunityDto opportunityDto) {
-        log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
+       // log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
+        List<JobTitleAndSkillResponseDto> skills = getSkillsFromIds(opportunityDto.getSkills());
+
+        if (skills == null ||(skills.size() < opportunityDto.getSkills().length))
+        {
+            log.error("Some skills are invalid in the request");
+            return false;
+        }
         Opportunity opportunity = new Opportunity().builder()
                 .title(opportunityDto.getTitle())
                 .description(opportunityDto.getDescription())
@@ -39,7 +47,6 @@ public class OpportunityService {
                 .creatorId(opportunityDto.getCreatorId())
                 .timestamp(new Date())
                 .build();
-
         try {
             opportunityRepository.save(opportunity);
             log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
@@ -102,7 +109,13 @@ public class OpportunityService {
                 log.error("Opportunity is invalid in the request");
                 return false;
             }
+            List<JobTitleAndSkillResponseDto> skills = getSkillsFromIds(updateOpportunityDto.getSkills());
 
+            if (skills == null ||(skills.size() < updateOpportunityDto.getSkills().length))
+            {
+                log.error("Some skills are invalid in the request");
+                return false;
+            }
             opportunity.setJobTitleId(updateOpportunityDto.getJobTitleId());
             opportunity.setCreatorId(updateOpportunityDto.getCreatorId());
             opportunityRepository.save(opportunity);
@@ -127,4 +140,17 @@ public class OpportunityService {
         opportunitySkillRepository.delete(opportunitySkillMapping);
         return true;
     }
+
+    private List<JobTitleAndSkillResponseDto> getSkillsFromIds(String[] ids) {
+        GetSkillsRequest request = new GetSkillsRequest(ids);
+        JobTitleAndSkillResponseDto[] response = webClientBuilder.build().post()
+                .uri("http://LIGHTCAST-SERVICE/api/skills")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(JobTitleAndSkillResponseDto[].class)
+                .block();
+        if (response == null) return null;
+        return Arrays.stream(response).toList();
+    }
+
 }
