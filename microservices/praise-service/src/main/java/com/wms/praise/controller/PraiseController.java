@@ -1,9 +1,7 @@
 package com.wms.praise.controller;
 
 import com.wms.praise.dto.*;
-import com.wms.praise.model.PraisedSkills;
 import com.wms.praise.service.PraiseService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
