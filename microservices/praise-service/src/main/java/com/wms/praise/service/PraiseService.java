@@ -34,7 +34,6 @@ public class PraiseService {
     public boolean createPraise(PraiseDto praiseDto) {
 
         List<JobTitleAndSkillResponseDto> skills = getSkillsFromIds(praiseDto.getSkills());
-
         if (skills == null ||(skills.size() < praiseDto.getSkills().length))
         {
             log.error("Some skills are invalid in the request");
