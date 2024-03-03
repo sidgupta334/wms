@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class UpdateOpportunityDto {
     private String entityId;
+    private String title;
     private String jobTitleId;
     private String creatorId;
     private String[] skills;

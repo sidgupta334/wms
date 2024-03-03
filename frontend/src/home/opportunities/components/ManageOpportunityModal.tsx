@@ -8,6 +8,7 @@ const ManageOpportunityModal: React.FC<ManageOpportunityModalProps> = ({
   showModal,
   closeModal,
   isLoading,
+  opportunity: 
 }) => {
   return <></>;
 };

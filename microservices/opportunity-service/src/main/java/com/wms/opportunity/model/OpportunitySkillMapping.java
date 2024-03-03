@@ -1,5 +1,6 @@
 package com.wms.opportunity.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,11 @@ public class OpportunitySkillMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
-    private String opportunityId;
-    private String[] skillId;
-    private Date timestamp;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "opportunityId")
+    @JsonIgnore
+    private Opportunity opportunity;
+    private String skillId;
+    private Date timestamp = new Date();
 }

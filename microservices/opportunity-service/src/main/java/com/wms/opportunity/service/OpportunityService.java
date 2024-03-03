@@ -40,7 +40,7 @@ public class OpportunityService {
             log.error("Some skills are invalid in the request");
             return false;
         }
-        Opportunity opportunity = new Opportunity().builder()
+        Opportunity opportunity = Opportunity.builder()
                 .title(opportunityDto.getTitle())
                 .description(opportunityDto.getDescription())
                 .jobTitleId(opportunityDto.getJobTitleId())
@@ -50,7 +50,7 @@ public class OpportunityService {
         try {
             opportunityRepository.save(opportunity);
             log.info("Opportunity with job title Id: " + opportunityDto.getJobTitleId()+"and creator id"+opportunityDto.getCreatorId() + " saved successfully...");
-            OpportunitySkillMapping opportunitySkillMapping = new OpportunitySkillMapping().builder()
+            OpportunitySkillMapping opportunitySkillMapping = OpportunitySkillMapping.builder()
                     .opportunityId(opportunity.getEntityId())
                     .skillId(opportunityDto.getSkills())
                     .timestamp(new Date())
@@ -69,20 +69,7 @@ public class OpportunityService {
         return opportunityList.stream().map(this::mapToOpportunityResponseDto).toList();
     }
 
-    private OpportunityResponseDto mapToOpportunityResponseDto(Opportunity opportunity) {
-        String entity = opportunity.getEntityId();
-        OpportunitySkillMapping opportunitySkills = getAllSkills(entity);
-        return OpportunityResponseDto.builder()
-                .entityId(opportunity.getEntityId())
-                .title(opportunity.getTitle())
-                .description(opportunity.getDescription())
-                .jobTitleId(opportunity.getJobTitleId())
-                .creatorId(opportunity.getCreatorId())
-                .skills(opportunitySkills.getSkillId())
-                .build();
-    }
-
-    private OpportunitySkillMapping getAllSkills(String entity) {
+    private List<OpportunitySkillMapping> getAllSkills(String entity) {
         return opportunitySkillRepository.findByOpportunityId(entity);
     }
 
@@ -120,7 +107,10 @@ public class OpportunityService {
             opportunity.setCreatorId(updateOpportunityDto.getCreatorId());
             opportunityRepository.save(opportunity);
             String id= updateOpportunityDto.getEntityId();
-            OpportunitySkillMapping opportunitySkillMapping = opportunitySkillRepository.findByOpportunityId(id);
+            List<OpportunitySkillMapping> opportunitySkillMappings = opportunitySkillRepository.findByOpportunityId(id);
+            opportunitySkillMappings.forEach(mapping -> {
+                opportunitySkillRepository.delete(mapping);
+            });
             opportunitySkillMapping.setSkillId(updateOpportunityDto.getSkills());
             opportunitySkillRepository.save(opportunitySkillMapping);
             return true;
@@ -139,6 +129,20 @@ public class OpportunityService {
         opportunityRepository.delete(opportunity);
         opportunitySkillRepository.delete(opportunitySkillMapping);
         return true;
+    }
+
+    private OpportunityResponseDto mapToOpportunityResponseDto(Opportunity opportunity) {
+        String entity = opportunity.getEntityId();
+        List<JobTitleAndSkillResponseDto> skills =
+        OpportunitySkillMapping opportunitySkills = getAllSkills(entity);
+        return OpportunityResponseDto.builder()
+                .entityId(opportunity.getEntityId())
+                .title(opportunity.getTitle())
+                .description(opportunity.getDescription())
+                .jobTitleId(opportunity.getJobTitleId())
+                .creatorId(opportunity.getCreatorId())
+                .skills(opportunitySkills.getSkillId())
+                .build();
     }
 
     private List<JobTitleAndSkillResponseDto> getSkillsFromIds(String[] ids) {

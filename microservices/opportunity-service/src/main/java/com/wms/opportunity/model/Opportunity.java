@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -26,6 +27,9 @@ public class Opportunity {
 
     @Column(nullable = false)
     private String creatorId;
+
+    @Column(insertable = false, updatable = false)
+    private List<String> skillIds;
 
     private String description;
     private Date timestamp;

@@ -7,15 +7,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class OpportunityResponseDto {
+public class EmployeeSearchResponseDto {
     private String entityId;
-    private String title;
-    private JobTitleAndSkillResponseDto jobTitleId;
-    private EmployeeSearchResponseDto creator;
-    private String description;
+    private String externalId;
+    private String name;
+    private String email;
+    private boolean isAdmin;
+    private JobTitleAndSkillResponseDto jobTitle;
     private List<JobTitleAndSkillResponseDto> skills;
 }
