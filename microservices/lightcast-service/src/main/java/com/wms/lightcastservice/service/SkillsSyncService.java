@@ -80,9 +80,13 @@ public class SkillsSyncService {
         log.info("Skill with id: " + skill.getExternalCode() + " saved in DB");
         indexSkill(skill);
         log.info("Skill with id: " + skill.getExternalCode() + " saved in Elasticsearch");
-        redisTemplate.opsForValue().set(SKILL_KEY + skill.getExternalCode(), skill);
+        cacheSkill(skill);
         log.info("Skill with id: " + skill.getExternalCode() + " saved in Cache");
         log.info("Skill with id: " + skillData.getId() + " saved successfully...");
+    }
+
+    public void cacheSkill(Skill skill) {
+        redisTemplate.opsForValue().set(SKILL_KEY + skill.getExternalCode(), skill);
     }
 
     public List<EmsiSkillResponse> filterNewSkills(List<EmsiSkillResponse> skillsToSave) {

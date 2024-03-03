@@ -37,6 +37,12 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
+    @GetMapping("/details/{externalId}")
+    @ResponseStatus(HttpStatus.OK)
+    public EmployeesResponseDto getEmployeeName(@PathVariable String externalId) {
+        return employeeService.getEmployeeByExternalId(externalId);
+    }
+
     @PutMapping("update")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> updateEmployees(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody UpdateEmployeeDto updateEmployeeDto) {

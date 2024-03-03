@@ -1,10 +1,7 @@
 package com.wms.authservice.service;
 
 import com.netflix.discovery.converters.Auto;
-import com.wms.authservice.dto.AuthUserResponse;
-import com.wms.authservice.dto.CreateEmployeesDto;
-import com.wms.authservice.dto.EmployeeCreateResultResponse;
-import com.wms.authservice.dto.EmployeeDto;
+import com.wms.authservice.dto.*;
 import com.wms.authservice.model.UserCredential;
 import com.wms.authservice.repository.UserCredentialRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +67,20 @@ public class AuthService {
         return response;
     }
 
+    public EmployeesResponse getEmployeeByExternalId(String externalId) {
+        try {
+            return webClientBuilder.build()
+                    .get()
+                    .uri("http://EMPLOYEES-SERVICE/api/employees/details/" + externalId)
+                    .retrieve()
+                    .bodyToMono(EmployeesResponse.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Something went wrong while fetching employee details: " + e);
+            return null;
+        }
+    }
+
     public boolean createEmployee(EmployeeDto employeeDto) {
         try {
             return Boolean.TRUE.equals(webClientBuilder
@@ -95,7 +106,6 @@ public class AuthService {
     }
 
 
-
     public AuthUserResponse getAuthUserByEmail(String email) {
         Optional<UserCredential> userCredential = userCredentialRepository.findByEmail(email);
         if (userCredential.isPresent()) {
@@ -103,6 +113,14 @@ public class AuthService {
             return mapToAuthUserResponse(authUser);
         }
         return null;
+    }
+
+    public EmployeesResponse getMeDetails(String token) {
+        token = token.substring(7);
+        AuthUserResponse response = jwtService.extractJWTAdminPayloadData(token);
+        EmployeesResponse employeeResponse = getEmployeeByExternalId(response.getExternalId());
+        employeeResponse.setAdmin(response.isAdmin());
+        return employeeResponse;
     }
 
     public AuthUserResponse extractUserInfo(String token) {

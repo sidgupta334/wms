@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class AuthUserResponse {
     private String email;
     private String externalId;
+    private String name;
     private boolean isAdmin;
 }

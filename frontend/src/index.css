@@ -21,6 +21,7 @@ body {
   overflow: auto;
   scrollbar-gutter: stable;
   position: relative;
+  background-color: #ECF2FF;
 }
 
 *,

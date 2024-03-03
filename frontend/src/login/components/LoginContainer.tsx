@@ -12,8 +12,15 @@ const LoginContainer: React.FC = () => {
       p={15}
       alignItems="center"
       justifyContent="center"
+      spacing={4}
       sx={{ backgroundColor: ColorPalette.SECONDARY50 }}
     >
+      <Stack direction="row" spacing={2}>
+        <img src="/images/logo.png" width={80} height={80} />
+        <Typography variant="h1" color={ColorPalette.PRIMARY700} sx={{ fontSize: 48 }}>
+          WMS Portal
+        </Typography>
+      </Stack>
       <Card boxShadow={CardBoxShadow.SHADOW3} hoverShadow={CardBoxShadow.SHADOW5}>
         <CardContent>
           <Stack spacing={5}>

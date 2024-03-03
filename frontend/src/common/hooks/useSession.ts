@@ -6,7 +6,7 @@ import useGetMyProfile from './useGetMyProfile';
 const useSession = (allowRefetch = true) => {
   const { value: hasSession, setItemValue: setSession } = useLocalStorage('hasSession');
   const { setItemValue: setToken } = useLocalStorage('auth-token');
-  const { loggedInProfile, setLoggedInProfile } = useLoggedInProfile();
+  const { setLoggedInProfile } = useLoggedInProfile();
 
   const {
     data: profile,
@@ -38,6 +38,7 @@ const useSession = (allowRefetch = true) => {
     isAdmin: hasSession && profile?.admin,
     startSession,
     clearSession,
+    profile,
   };
 };
 

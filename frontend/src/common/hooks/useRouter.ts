@@ -1,8 +1,7 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 
 const useRouter = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const redirectToRoute = (route: string, state = {}, e?: React.BaseSyntheticEvent) => {
     e && e.stopPropagation();
@@ -13,9 +12,17 @@ const useRouter = () => {
     navigate(-1);
   };
 
+  const navigateWithSearchParams = (route: string, searchParams: any) => {
+    navigate({
+      pathname: route,
+      search: `?${createSearchParams(searchParams)}`,
+    });
+  };
+
   return {
     redirectToRoute,
     goBack,
+    navigateWithSearchParams,
   };
 };
 

@@ -44,8 +44,10 @@ public class SkillsService {
         var keys = Arrays.stream(externalIds).map(externalId -> SKILL_KEY + externalId).toList();
         final ValueOperations<String, Skill> operations = redisTemplate.opsForValue();
         List<Skill> skills = operations.multiGet(keys);
-        if (skills == null || skills.isEmpty()) {
-            return skillRepository.findAllByExternalCode(externalIds).stream().map(this::mapToSkillResponse).toList();
+        if (skills == null || skills.isEmpty() || skills.contains(null)) {
+            List<Skill> skillsFromDB = skillRepository.findSkillsByExternalCode(Arrays.asList(externalIds));
+            skillsFromDB.forEach(skill -> skillsSyncService.cacheSkill(skill));
+            return skillsFromDB.stream().map(this::mapToSkillResponse).toList();
         }
         return skills.stream().filter(Objects::nonNull).map(this::mapToSkillResponse).toList();
     }
