@@ -32,7 +32,7 @@ const ProfileContainer: React.FC<ProfileContainerProps> = ({ profile }) => {
 
   return (
     <>
-      <Card boxShadow={CardBoxShadow.SHADOW3}>
+      <Card boxShadow={CardBoxShadow.SHADOW3} sx={{ maxHeight: '85vh', overflow: 'auto' }}>
         <CardContent>
           <Stack alignItems="flex-end">
             <IconButton

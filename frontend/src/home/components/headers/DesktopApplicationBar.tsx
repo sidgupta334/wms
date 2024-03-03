@@ -28,6 +28,14 @@ const DesktopApplicationBar: React.FC = () => {
     logoutUser();
   };
 
+  const goToOpportunities = () => {
+    redirectToRoute(AppRoutesEnum.OPPORTUNITIES);
+  };
+
+  const goToAdmin = () => {
+    redirectToRoute(AppRoutesEnum.ADMIN_HOME);
+  };
+
   return (
     <ElevationScroll>
       <ApplicationBar>
@@ -51,20 +59,15 @@ const DesktopApplicationBar: React.FC = () => {
           </Grid>
           <Grid item>
             <HeaderLink
-              Icon={AddReactionRoundedIcon}
-              label="Praises"
-              onClick={handleLogout}
-            />
-            <HeaderLink
               Icon={WorkHistoryRoundedIcon}
               label="Opportunities"
-              onClick={handleLogout}
+              onClick={goToOpportunities}
             />
             {isAdmin && (
               <HeaderLink
                 Icon={AdminPanelSettingsIcon}
                 label="Manage Settings"
-                onClick={handleLogout}
+                onClick={goToAdmin}
               />
             )}
           </Grid>
