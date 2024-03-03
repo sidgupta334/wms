@@ -83,6 +83,10 @@ public class EmployeeSearchService {
         return employeeRepository.findByNameContaining(query, pageable).stream().toList();
     }
 
+    public Employee getEmployeeByExternalId(String externalId) {
+        return employeeRepository.findByExternalId(externalId);
+    }
+
     private JobTitle getJobTitleById(String id) {
         if (id == null) return null;
         Optional<JobTitle> jobTitleOptional = jobTitleRepository.findById(id);

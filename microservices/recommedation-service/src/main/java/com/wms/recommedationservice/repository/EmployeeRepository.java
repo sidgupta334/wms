@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmployeeRepository extends ElasticsearchRepository<Employee, String> {
     Page<Employee> findByNameContaining(String query, Pageable pageable);
+
+    Employee findByExternalId(String externalId);
 }

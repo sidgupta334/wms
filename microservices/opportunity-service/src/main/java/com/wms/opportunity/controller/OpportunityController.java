@@ -30,7 +30,7 @@ public class OpportunityController {
     @GetMapping("/get/{id}")
     @ResponseStatus(HttpStatus.OK)
     public List<OpportunityResponseDto> getOpportunity(@PathVariable String id) {
-        return opportunityService.getOpportunity(id);
+        return opportunityService.getOpportunityById(id);
     }
     @PutMapping("update")
     @ResponseStatus(HttpStatus.OK)
@@ -39,22 +39,22 @@ public class OpportunityController {
         if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), updateOpportunityDto.getCreatorId())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
         }
-        boolean result = opportunityService.updateOpportunitySkills(updateOpportunityDto);
+        boolean result = opportunityService.updateOpportunity(updateOpportunityDto);
         if (result) {
             return ResponseEntity.ok("Success");
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> deleteEndorsement(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OpportunityDeleteDto opportunityDeleteDto)
+    public ResponseEntity<?> deleteEndorsement(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable String id)
     {
         AuthUserResponse loggedInUser = opportunityService.getLoggedInUser(token);
-        if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), opportunityDeleteDto.getCreatorId())) {
+        if (!loggedInUser.isAdmin()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
         }
-        boolean result = opportunityService.deleteOpportunity(opportunityDeleteDto);
+        boolean result = opportunityService.deleteOpportunity(id, loggedInUser);
         if (result) {
             return ResponseEntity.ok("Success");
         }
@@ -62,7 +62,11 @@ public class OpportunityController {
     }
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public boolean createOpportunity(@Valid @RequestBody OpportunityDto opportunityDto) {
-        return opportunityService.createOpportunity(opportunityDto);
+    public ResponseEntity<?> createOpportunity(@Valid @RequestBody OpportunityDto opportunityDto) {
+        boolean result = opportunityService.createOpportunity(opportunityDto);
+        if (result) {
+            return ResponseEntity.ok("Opportunity Created Successfully");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
     }
 }

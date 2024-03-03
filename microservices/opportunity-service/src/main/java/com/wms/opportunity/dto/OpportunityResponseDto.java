@@ -14,7 +14,7 @@ import java.util.List;
 public class OpportunityResponseDto {
     private String entityId;
     private String title;
-    private JobTitleAndSkillResponseDto jobTitleId;
+    private JobTitleAndSkillResponseDto jobTitle;
     private EmployeeSearchResponseDto creator;
     private String description;
     private List<JobTitleAndSkillResponseDto> skills;

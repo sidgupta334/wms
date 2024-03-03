@@ -2,6 +2,7 @@ package com.wms.recommedationservice.controller;
 
 import com.wms.recommedationservice.dto.AuthUserResponse;
 import com.wms.recommedationservice.dto.EmployeeRequest;
+import com.wms.recommedationservice.model.Employee;
 import com.wms.recommedationservice.service.AuthService;
 import com.wms.recommedationservice.service.EmployeeSearchService;
 import jakarta.validation.Valid;
@@ -30,6 +31,11 @@ public class EmployeeSearchController {
     @GetMapping("")
     public ResponseEntity<?> searchSkills(@RequestParam String term) {
         return ResponseEntity.ok(employeeSearchService.searchEmployeesByName(term));
+    }
+
+    @GetMapping("{externalId}")
+    public Employee findEmployeeByExternalId(@PathVariable String externalId) {
+        return employeeSearchService.getEmployeeByExternalId(externalId);
     }
 
     @GetMapping("reindex")
