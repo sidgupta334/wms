@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/endorsement")
 public class EndorsementController {
@@ -27,8 +29,16 @@ public class EndorsementController {
     }
     @DeleteMapping()
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteEndorsement(@Valid @RequestBody EndorsementDeleteDto endorsementDeleteDto)
+    public ResponseEntity<?> deleteEndorsement(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestBody EndorsementDeleteDto endorsementDeleteDto)
     {
-        return endorsementService.deleteEndorsement(endorsementDeleteDto);
+        AuthUserResponses loggedInUser = endorsementService.getLoggedInUser(token);
+        if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), endorsementDeleteDto.getGiverId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
+        }
+        boolean result = endorsementService.deleteEndorsement(endorsementDeleteDto);
+        if (result) {
+            return ResponseEntity.ok("Success");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
     }
 }

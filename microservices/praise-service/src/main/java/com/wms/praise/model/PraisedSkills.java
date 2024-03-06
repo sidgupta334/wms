@@ -1,5 +1,6 @@
 package com.wms.praise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,11 @@ public class PraisedSkills {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
-    private String praiseId;
-    private String[] skillId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "praiseId")
+    @JsonIgnore
+    private Praise praise;
+    private String skillId;
     private Date timestamp;
 }

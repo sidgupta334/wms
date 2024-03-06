@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class UpdatePraiseDto {
     private String entityId;
+    private String title;
+    private String description;
     private String giverId;
     private String receiverId;
     private String[] skills;

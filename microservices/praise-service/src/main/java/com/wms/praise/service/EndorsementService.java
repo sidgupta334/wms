@@ -1,5 +1,6 @@
 package com.wms.praise.service;
 
+import com.wms.praise.dto.AuthUserResponses;
 import com.wms.praise.dto.EndorsementDeleteDto;
 import com.wms.praise.dto.EndorsementDto;
 import com.wms.praise.model.Endorsement;
@@ -7,6 +8,7 @@ import com.wms.praise.repository.EndorsementRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Date;
 
@@ -15,6 +17,9 @@ import java.util.Date;
 public class  EndorsementService {
     @Autowired
     EndorsementRepository endorsementRepository;
+
+    @Autowired
+    private WebClient.Builder webClientBuilder;
     public boolean createEndorsement(EndorsementDto endorsementDto) {
         Endorsement endorsement = Endorsement.builder()
                 .giverId(endorsementDto.getGiverId())
@@ -37,5 +42,14 @@ public class  EndorsementService {
             return false;
         endorsementRepository.delete(endorsement);
         return true;
+    }
+    public AuthUserResponses getLoggedInUser(String token)
+    {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://AUTH-SERVICE/api/auth/extract/" + token)
+                .retrieve()
+                .bodyToMono(AuthUserResponses.class)
+                .block();
     }
 }

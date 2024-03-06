@@ -7,6 +7,7 @@ import com.wms.praise.model.PraisedSkills;
 import com.wms.praise.repository.PraiseRepository;
 import com.wms.praise.repository.PraiseSkillsRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,12 +50,13 @@ public class PraiseService {
 
         try {
             praiseRepository.save(praise);
-            PraisedSkills praisedSkills = PraisedSkills.builder()
-                    .praiseId(praise.getEntityId())
-                    .skillId(praiseDto.getSkills())
+            List<PraisedSkills> mappings = Arrays.stream(praiseDto.getSkills()).map(skill -> PraisedSkills.builder()
+                    .praise(praise)
+                    .skillId(skill)
                     .timestamp(new Date())
-                    .build();
-            praiseSkillsRepository.save(praisedSkills);
+                    .build()
+            ).toList();
+            praiseSkillsRepository.saveAll(mappings);
             log.info("Praise with giver Id: " + praiseDto.getGiverId()+"and receiver_id "+praiseDto.getReceiverId() + " saved successfully...");
             return true;
         } catch (Exception e) {
@@ -71,19 +73,51 @@ public class PraiseService {
 
     private PraiseResponseDto mapToPraiseResponseDto(Praise praise) {
         String entity = praise.getEntityId();
-        PraisedSkills praisedSkills = getAllSkills(entity);
+        List<PraisedSkills> mappings = getAllSkills(praise);
+        String[] skillIds = mappings.stream().map(PraisedSkills::getSkillId).toArray(String[]::new);
+
+        List<JobTitleAndSkillResponseDto> skills = getSkillsFromIds(skillIds);
+        JobTitleAndSkillResponseDto jobTitle = getJobTitleFromId(praise.getGiverId());
+        EmployeeSearchResponseDto employeeSearchResponseDto = getEmployeeById(praise.getGiverId());
+
         return PraiseResponseDto.builder()
                 .entityId(entity)
                 .title(praise.getTitle())
                 .description(praise.getDescription())
-                .giverId(praise.getGiverId())
+                .giverId(employeeSearchResponseDto)
                 .receiverId(praise.getReceiverId())
-                .skills(praisedSkills.getSkillId())
+                .skills(skills)
                 .build();
     }
-    public PraisedSkills getAllSkills(String praiseId)
+    private List<JobTitleAndSkillResponseDto> getSkillsFromIds(String[] ids) {
+        GetSkillsRequest request = new GetSkillsRequest(ids);
+        JobTitleAndSkillResponseDto[] response = webClientBuilder.build().post()
+                .uri("http://LIGHTCAST-SERVICE/api/skills")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(JobTitleAndSkillResponseDto[].class)
+                .block();
+        if (response == null) return null;
+        return Arrays.stream(response).toList();
+    }
+    private EmployeeSearchResponseDto getEmployeeById(String id) {
+        return webClientBuilder.build().get()
+                .uri("http://RECOMMENDATION-SERVICE/api/search/employees/" + id)
+                .retrieve()
+                .bodyToMono(EmployeeSearchResponseDto.class)
+                .block();
+    }
+    private JobTitleAndSkillResponseDto getJobTitleFromId(String id) {
+        return webClientBuilder.build().get()
+                .uri("http://LIGHTCAST-SERVICE/api/job-titles/" + id)
+                .retrieve()
+                .bodyToMono(JobTitleAndSkillResponseDto.class)
+                .block();
+    }
+
+    public List<PraisedSkills> getAllSkills(Praise praise)
     {
-       return praiseSkillsRepository.findByPraiseId(praiseId);
+       return praiseSkillsRepository.findByPraise(praise);
     }
     public AuthUserResponses getLoggedInUser(String token)
     {
@@ -106,18 +140,6 @@ public class PraiseService {
     }
 
 
-    public List<PraisedSkillsResponse> getPraisedSkills() {
-        List<PraisedSkills> praisedSkillsResponses = praiseSkillsRepository.findAll();
-        return praisedSkillsResponses.stream().map(this::mapToPraisedSkillsResponse).toList();
-    }
-
-    private PraisedSkillsResponse mapToPraisedSkillsResponse(PraisedSkills praisedSkills) {
-        return PraisedSkillsResponse.builder()
-                .praiseId(praisedSkills.getPraiseId())
-                .skillId(praisedSkills.getSkillId())
-                .build();
-    }
-
     public boolean updatePraisedSkills(UpdatePraiseDto updatePraiseDto) {
         try{
             Praise praise = praiseRepository.findByEntityId(updatePraiseDto.getEntityId());
@@ -135,11 +157,20 @@ public class PraiseService {
             }
             praise.setGiverId(updatePraiseDto.getGiverId());
             praise.setReceiverId(updatePraiseDto.getReceiverId());
+            praise.setTitle(updatePraiseDto.getTitle());
+            praise.setDescription(updatePraiseDto.getDescription());
+            praise.setTimestamp(new Date());
             praiseRepository.save(praise);
-            String id= updatePraiseDto.getEntityId();
-            PraisedSkills praisedSkills = praiseSkillsRepository.findByPraiseId(id);
-            praisedSkills.setSkillId(updatePraiseDto.getSkills());
-            praiseSkillsRepository.save(praisedSkills);
+            List<PraisedSkills> opportunitySkillMappings = praiseSkillsRepository.findByPraise(praise);
+            opportunitySkillMappings.forEach(mapping  -> {
+                    praiseSkillsRepository.delete(mapping);
+            });
+            List<PraisedSkills> updatedMappings = skills.stream().map(skill -> PraisedSkills.builder()
+                    .praise(praise)
+                    .skillId(skill.getId())
+                    .build()
+
+            ).toList();
             return true;
         }
         catch (Exception e) {
@@ -148,24 +179,15 @@ public class PraiseService {
         }
     }
 
-    public boolean deletePraise(PraiseDeleteDto praiseDeleteDto) {
-        Praise praise = praiseRepository.findByEntityId(praiseDeleteDto.getEntityId());
+    public boolean deletePraise(String id, AuthUserResponses loggedInUser) {
+        Praise praise = praiseRepository.findByEntityId(id);
         if(praise == null)
             return false;
-        PraisedSkills praisedSkills = praiseSkillsRepository.findByPraiseId(praise.getEntityId());
+         if (!loggedInUser.isAdmin() && !praise.getGiverId().equals(loggedInUser.getExternalId())) {
+            throw new ValidationException("Invalid Request");
+        }
+        praiseSkillsRepository.deleteAllByPraise(praise);
         praiseRepository.delete(praise);
-        praiseSkillsRepository.delete(praisedSkills);
         return true;
-    }
-    private List<JobTitleAndSkillResponseDto> getSkillsFromIds(String[] ids) {
-        GetSkillsRequest request = new GetSkillsRequest(ids);
-        JobTitleAndSkillResponseDto[] response = webClientBuilder.build().post()
-                .uri("http://LIGHTCAST-SERVICE/api/skills")
-                .bodyValue(request)
-                .retrieve()
-                .bodyToMono(JobTitleAndSkillResponseDto[].class)
-                .block();
-        if (response == null) return null;
-        return Arrays.stream(response).toList();
     }
 }

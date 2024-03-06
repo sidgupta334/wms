@@ -40,19 +40,6 @@ public class PraiseController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
     }
-/*
-    @GetMapping("get/praisedSkills")
-    @ResponseStatus(HttpStatus.OK)
-    public List<PraisedSkillsResponse>  getPraisedSkills() {
-        return praiseService.getPraisedSkills();
-    }
-
-    @GetMapping("get/praisedSkills/{praiseId}")
-    @ResponseStatus(HttpStatus.OK)
-    public PraisedSkills getPraisedSkills(@PathVariable String praiseId) {
-        return praiseService.getAllSkills(praiseId);
-    }
-*/
     @GetMapping("/get/receiver/{receiverId}")
     @ResponseStatus(HttpStatus.OK)
     public List<PraiseResponseDto>  getReceiverPraises(@PathVariable String receiverId) {
@@ -79,15 +66,15 @@ public class PraiseController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> deleteEndorsement(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody PraiseDeleteDto praiseDeleteDto)
+    public ResponseEntity<?> deleteEndorsement(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable  String id)
     {
         AuthUserResponses loggedInUser = praiseService.getLoggedInUser(token);
-        if (!loggedInUser.isAdmin() && !Objects.equals(loggedInUser.getExternalId(), praiseDeleteDto.getGiverId())) {
+        if (!loggedInUser.isAdmin()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is Unauthorized");
         }
-        boolean result = praiseService.deletePraise(praiseDeleteDto);
+        boolean result = praiseService.deletePraise(id, loggedInUser);
         if (result) {
             return ResponseEntity.ok("Success");
         }
