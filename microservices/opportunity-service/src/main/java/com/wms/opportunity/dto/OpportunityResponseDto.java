@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -18,4 +19,5 @@ public class OpportunityResponseDto {
     private EmployeeSearchResponseDto creator;
     private String description;
     private List<JobTitleAndSkillResponseDto> skills;
+    private Date timestamp;
 }

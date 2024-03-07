@@ -9,6 +9,7 @@ import useRouter from 'common/hooks/useRouter';
 import { AppRoutesEnum } from 'common/routes/AppRoutes.enum';
 import HeaderLink from './HeaderLink';
 import useLogoutApi from 'common/hooks/useLogoutApi';
+import ColorPalette from 'common/theme/colorPalette';
 
 const DesktopAdminApplicationBar: React.FC = () => {
   const { redirectToRoute } = useRouter();
@@ -35,7 +36,7 @@ const DesktopAdminApplicationBar: React.FC = () => {
               onClick={handleLogoClick}
             >
               <img src="/images/logo.png" width={45} height={45} />
-              <Typography variant="h3" fontWeight={700}>
+              <Typography variant="h3" sx={{ color: ColorPalette.BLACK }} fontWeight={700}>
                 WMS
               </Typography>
             </Stack>

@@ -155,6 +155,7 @@ public class OpportunityService {
                 .description(opportunity.getDescription())
                 .skills(skills)
                 .jobTitle(jobTitle)
+                .timestamp(opportunity.getTimestamp())
                 .creator(employeeSearchResponseDto)
                 .build();
     }

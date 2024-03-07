@@ -8,11 +8,12 @@ export type Opportunity = {
   jobTitle?: JobSkillType;
   skills?: JobSkillType[];
   creator?: ProfileType;
+  timestamp?: Date;
 };
 
 export type ManageOpportunity = Opportunity & {
-  jobTitleId: string;
-  creatorId: string;
+  jobTitleId?: string;
+  creatorId?: string;
   description: string;
-  skills: string[];
+  skillIds?: string[];
 };

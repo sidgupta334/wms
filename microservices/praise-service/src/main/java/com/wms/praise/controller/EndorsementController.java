@@ -1,9 +1,6 @@
 package com.wms.praise.controller;
 
-import com.wms.praise.dto.AuthUserResponses;
-import com.wms.praise.dto.EndorsementDeleteDto;
-import com.wms.praise.dto.EndorsementDto;
-import com.wms.praise.dto.PraiseDto;
+import com.wms.praise.dto.*;
 import com.wms.praise.model.Endorsement;
 import com.wms.praise.repository.EndorsementRepository;
 import com.wms.praise.service.EndorsementService;
@@ -14,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -40,5 +38,11 @@ public class EndorsementController {
             return ResponseEntity.ok("Success");
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+    }
+
+    @GetMapping("{profileId}")
+    public ResponseEntity<?> getSkillEndorsementsByProfile(@PathVariable  String profileId) {
+        List<JobTitleAndSkillResponseDto> response = endorsementService.getEndorsedSkillsByUser(profileId);
+        return ResponseEntity.ok(response);
     }
 }

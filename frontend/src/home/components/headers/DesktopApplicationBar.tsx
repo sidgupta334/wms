@@ -14,6 +14,7 @@ import useRouter from 'common/hooks/useRouter';
 import { AppRoutesEnum } from 'common/routes/AppRoutes.enum';
 import SearchBar from './SearchBar';
 import useSession from 'common/hooks/useSession';
+import ColorPalette from 'common/theme/colorPalette';
 
 const DesktopApplicationBar: React.FC = () => {
   const { redirectToRoute } = useRouter();
@@ -40,7 +41,7 @@ const DesktopApplicationBar: React.FC = () => {
     <ElevationScroll>
       <ApplicationBar>
         <Grid container alignItems="center" justifyContent="space-between">
-          <Grid item>
+          <Grid item md={1}>
             <Stack
               direction="row"
               spacing={2}
@@ -49,12 +50,12 @@ const DesktopApplicationBar: React.FC = () => {
               onClick={handleLogoClick}
             >
               <img src="/images/logo.png" width={45} height={45} />
-              <Typography variant="h3" fontWeight={700}>
+              <Typography variant="h3" sx={{ color: ColorPalette.BLACK }} fontWeight={700}>
                 WMS
               </Typography>
             </Stack>
           </Grid>
-          <Grid item md={4}>
+          <Grid item md={3}>
             <SearchBar />
           </Grid>
           <Grid item>

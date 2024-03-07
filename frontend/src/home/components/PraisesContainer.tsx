@@ -8,6 +8,9 @@ import { ProfileType } from 'home/types/profile.type';
 import { useState } from 'react';
 import SkillsContent from './SkillsContent';
 import PraisesContent from './PraisesContent';
+import TextField from 'common/components/material/TextField';
+import useDebounce from 'common/hooks/useDebounce';
+import useSearchSkillsApi from 'common/hooks/useSearchSkillsApi';
 
 type PraisesContainerProps = {
   profile: ProfileType;
@@ -19,10 +22,12 @@ const TABS = [
 ];
 
 const PraisesContainer: React.FC<PraisesContainerProps> = ({ profile }) => {
-  const [selectedTab, setSelectedTab] = useState(PraiseContentTab.SKILLS);
+  const [inputValue, setInputValue] = useState('');
 
-  const handleChange = (newValue: PraiseContentTab) => {
-    setSelectedTab(newValue);
+  const { data: searchedSkills } = useSearchSkillsApi(inputValue);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    searchedSkills(e.target.value);
   };
 
   return (
@@ -30,28 +35,22 @@ const PraisesContainer: React.FC<PraisesContainerProps> = ({ profile }) => {
       <Card boxShadow={CardBoxShadow.SHADOW3} sx={{ maxHeight: '85vh', overflow: 'auto' }}>
         <CardContent>
           <Stack spacing={2} sx={{ p: 1 }}>
-            <Typography
-              variant="h3"
-              color={ColorPalette.PRIMARY700}
-              sx={{ fontWeight: 'bolder' }}
-            >
-              Praises and Endorsements
-            </Typography>
-            <ButtonTabs
-              value={selectedTab}
-              tabs={TABS}
-              onChange={handleChange}
-              btnGap={1.75}
-            />
+            <Stack direction="row" justifyContent="space-between">
+              <Typography
+                variant="h4"
+                color={ColorPalette.PRIMARY700}
+                sx={{ fontWeight: 'bolder' }}
+              >
+                Skill Endorsements
+              </Typography>
+              <TextField
+                variant="outlined"
+                onChange={handleInputChange}
+                label="Search skills"
+              />
+            </Stack>
           </Stack>
-          {(() => {
-            switch (selectedTab) {
-              case PraiseContentTab.SKILLS:
-                return <SkillsContent profile={profile} />;
-              default:
-                return <PraisesContent profile={profile} />;
-            }
-          })()}
+          <SkillsContent profile={profile} />
         </CardContent>
       </Card>
     </>

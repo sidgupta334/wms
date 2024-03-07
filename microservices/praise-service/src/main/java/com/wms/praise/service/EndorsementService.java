@@ -1,8 +1,6 @@
 package com.wms.praise.service;
 
-import com.wms.praise.dto.AuthUserResponses;
-import com.wms.praise.dto.EndorsementDeleteDto;
-import com.wms.praise.dto.EndorsementDto;
+import com.wms.praise.dto.*;
 import com.wms.praise.model.Endorsement;
 import com.wms.praise.repository.EndorsementRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -43,6 +43,13 @@ public class  EndorsementService {
         endorsementRepository.delete(endorsement);
         return true;
     }
+
+    public List<JobTitleAndSkillResponseDto> getEndorsedSkillsByUser(String profileId) {
+        List<Endorsement> endorsements = endorsementRepository.findByReceiverId(profileId);
+        List<String> skillIds = endorsements.stream().map(Endorsement::getSkillId).toList();
+        return getSkillsFromIds(skillIds.toArray(new String[0]));
+    }
+
     public AuthUserResponses getLoggedInUser(String token)
     {
         return webClientBuilder.build()
@@ -51,5 +58,17 @@ public class  EndorsementService {
                 .retrieve()
                 .bodyToMono(AuthUserResponses.class)
                 .block();
+    }
+
+    private List<JobTitleAndSkillResponseDto> getSkillsFromIds(String[] ids) {
+        GetSkillsRequest request = new GetSkillsRequest(ids);
+        JobTitleAndSkillResponseDto[] response = webClientBuilder.build().post()
+                .uri("http://LIGHTCAST-SERVICE/api/skills")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(JobTitleAndSkillResponseDto[].class)
+                .block();
+        if (response == null) return null;
+        return Arrays.stream(response).toList();
     }
 }

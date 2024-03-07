@@ -21,8 +21,6 @@ const useSearchJobTitlesApi = (term: string, options: UseQueryOptions = {}) => {
     queryKey.push(debouncedTerm);
   }
 
-  console.log('debouncedTerm: ', debouncedTerm);
-
   const queryResponse = useQuery(
     queryKey,
     useCallback(() => searchJobTitlesApi(debouncedTerm), [debouncedTerm]),

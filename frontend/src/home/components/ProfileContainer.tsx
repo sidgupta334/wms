@@ -54,6 +54,7 @@ const ProfileContainer: React.FC<ProfileContainerProps> = ({ profile }) => {
         </CardContent>
       </Card>
       <EditProfileModal
+        isLoading={isLoading}
         showModal={isModalOpen}
         jobTitle={profile?.jobTitle}
         skills={profile?.skills}
