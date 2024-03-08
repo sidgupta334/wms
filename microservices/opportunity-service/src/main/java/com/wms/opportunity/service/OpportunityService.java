@@ -50,6 +50,7 @@ public class OpportunityService {
                 .build();
         try {
             opportunityRepository.save(opportunity);
+            indexOpportunity(opportunity.getEntityId());
             List<OpportunitySkillMapping> mappings = Arrays.stream(opportunityDto.getSkills()).map(skill -> OpportunitySkillMapping.builder()
                     .opportunity(opportunity)
                     .skillId(skill)
@@ -109,6 +110,7 @@ public class OpportunityService {
             opportunity.setTimestamp(new Date());
 
             opportunityRepository.save(opportunity);
+            indexOpportunity(opportunity.getEntityId());
             List<OpportunitySkillMapping> opportunitySkillMappings = opportunitySkillRepository.findByOpportunity(opportunity);
             opportunitySkillMappings.forEach(mapping -> {
                 opportunitySkillRepository.delete(mapping);
@@ -137,6 +139,7 @@ public class OpportunityService {
         }
         opportunitySkillRepository.deleteAllByOpportunity(opportunity);
         opportunityRepository.delete(opportunity);
+        deleteOpportunityIndex(opportunity.getEntityId());
         return true;
     }
 
@@ -186,6 +189,32 @@ public class OpportunityService {
                 .retrieve()
                 .bodyToMono(EmployeeSearchResponseDto.class)
                 .block();
+    }
+
+    private void indexOpportunity(String entityId) {
+        try {
+            webClientBuilder.baseUrl("http://RECOMMENDATION-SERVICE").build()
+                    .get()
+                    .uri("/api/search/opportunity/index/" + entityId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Something went wrong while indexing opportunity..." + e);
+        }
+    }
+
+    private void deleteOpportunityIndex(String entityId) {
+        try {
+            webClientBuilder.baseUrl("http://RECOMMENDATION-SERVICE").build()
+                    .delete()
+                    .uri("/api/search/opportunity/" + entityId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Something went wrong while deleting opportunity index..." + e);
+        }
     }
 
 }

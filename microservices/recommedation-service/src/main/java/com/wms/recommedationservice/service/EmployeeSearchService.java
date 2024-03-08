@@ -60,21 +60,7 @@ public class EmployeeSearchService {
 
     public void reindexAllEmployees() {
         List<EmployeeSearchResponseDto> employeesToReindex = Arrays.stream(getAllEmployees()).toList();
-        employeesToReindex.forEach(employee -> {
-            try {
-                addEmployee(EmployeeRequest.builder()
-                        .externalId(employee.getExternalId())
-                        .name(employee.getName())
-                        .isAdmin(employee.isAdmin())
-                        .email(employee.getEmail())
-                        .skillIds(employee.getSkills().stream().map(JobTitleAndSkillResponseDto::getId).toList())
-                        .jobTitleId(employee.getJobTitle() != null ? employee.getJobTitle().getId() : null)
-                        .build());
-                log.info("Employee " + employee.getExternalId() + " reindexed...");
-            } catch (Exception e) {
-                log.error("Something went wrong while reindexing " + employee.getExternalId() + ", error: " + e);
-            }
-        });
+        employeesToReindex.forEach(this::reindexSingleEmployee);
         log.info("Employee reindex completed successfully...");
     }
 
@@ -85,6 +71,27 @@ public class EmployeeSearchService {
 
     public Employee getEmployeeByExternalId(String externalId) {
         return employeeRepository.findByExternalId(externalId);
+    }
+
+    public void reindexEmployee(String externalId) {
+        EmployeeSearchResponseDto employee = getOriginalEmployeeByExternalId(externalId);
+        reindexSingleEmployee(employee);
+    }
+
+    private void reindexSingleEmployee(EmployeeSearchResponseDto employee) {
+        try {
+            addEmployee(EmployeeRequest.builder()
+                    .externalId(employee.getExternalId())
+                    .name(employee.getName())
+                    .isAdmin(employee.isAdmin())
+                    .email(employee.getEmail())
+                    .skillIds(employee.getSkills().stream().map(JobTitleAndSkillResponseDto::getId).toList())
+                    .jobTitleId(employee.getJobTitle() != null ? employee.getJobTitle().getId() : null)
+                    .build());
+            log.info("Employee " + employee.getExternalId() + " reindexed...");
+        } catch (Exception e) {
+            log.error("Something went wrong while reindexing " + employee.getExternalId() + ", error: " + e);
+        }
     }
 
     private JobTitle getJobTitleById(String id) {
@@ -107,6 +114,15 @@ public class EmployeeSearchService {
                 .uri("http://EMPLOYEES-SERVICE/api/employees/internal")
                 .retrieve()
                 .bodyToMono(EmployeeSearchResponseDto[].class)
+                .block();
+    }
+
+    private EmployeeSearchResponseDto getOriginalEmployeeByExternalId(String externalId) {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://EMPLOYEES-SERVICE/api/employees/details/" + externalId)
+                .retrieve()
+                .bodyToMono(EmployeeSearchResponseDto.class)
                 .block();
     }
 }

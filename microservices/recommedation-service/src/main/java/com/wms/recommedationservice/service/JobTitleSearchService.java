@@ -63,7 +63,7 @@ public class JobTitleSearchService {
 
     public List<JobTitleAndSkillResponseDto> searchJobTitles(String query) {
         Pageable pageable = PageRequest.of(0, 100);
-        return mapToJobTitleAndSkillResponseDto(jobTitleRepository.findByNameContaining(query, pageable).stream().toList());
+        return mapToJobTitleAndSkillResponseDto(jobTitleRepository.searchByName(query, pageable).stream().toList());
     }
 
     private List<JobTitleAndSkillResponseDto> mapToJobTitleAndSkillResponseDto(List<JobTitle> jobTitles) {

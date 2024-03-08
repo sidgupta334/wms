@@ -10,5 +10,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JobTitleRepository extends ElasticsearchRepository<JobTitle, String> {
 
-    Page<JobTitle> findByNameContaining(String term, Pageable pageable);
+    @Query("""
+            {
+              "bool": {
+                "must": [
+                  { "match": { "name": "?0" } }
+                ]
+              }
+            }
+            """)
+    Page<JobTitle> searchByName(String name, Pageable pageable);
 }

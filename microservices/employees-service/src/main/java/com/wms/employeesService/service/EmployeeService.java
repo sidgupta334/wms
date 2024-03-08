@@ -193,7 +193,7 @@ public class EmployeeService {
                     .bodyToMono(String.class)
                     .block();
         } catch (Exception e) {
-            log.error("Something went wrong while indexing skill..." + e);
+            log.error("Something went wrong while indexing employee..." + e);
         }
     }
 }

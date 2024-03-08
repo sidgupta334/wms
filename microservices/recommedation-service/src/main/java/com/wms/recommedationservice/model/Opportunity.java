@@ -9,13 +9,22 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.util.Date;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-@Document(indexName = "job-title")
-public class JobTitle {
+@Document(indexName = "opportunity")
+public class Opportunity {
     @Id
-    private String externalCode;
-    private String name;
+    private String entityId;
+    private String title;
+    private String description;
+    private Date timestamp;
+    @Field(type = FieldType.Nested, includeInParent = true)
+    private JobTitle jobTitle;
+    @Field(type = FieldType.Nested, includeInParent = true)
+    private List<Skill> skills;
 }

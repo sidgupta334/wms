@@ -38,6 +38,12 @@ public class EmployeeSearchController {
         return employeeSearchService.getEmployeeByExternalId(externalId);
     }
 
+    @GetMapping("index/{externalId}")
+    public String reindexEmployee(@PathVariable String externalId) {
+        employeeSearchService.reindexEmployee(externalId);
+        return "Success";
+    }
+
     @GetMapping("reindex")
     public ResponseEntity<String> reindexEmployees(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         AuthUserResponse loggedInUser = authService.getLoggedInUser(token);
