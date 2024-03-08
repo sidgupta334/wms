@@ -25,30 +25,17 @@ public interface OpportunityRepository extends ElasticsearchRepository<Opportuni
             """)
     List<Opportunity> searchOpportunitiesByTitle(String title);
 
-    @Query(value = """
+    @Query("""
             {
-              "size": 100,
-              "sort": [
-                { "_script": {
-                  "script": {
-                    "lang": "painless",
-                    "source": "doc['skills.externalCode'].size() * doc.score"
-                  },
-                  "order": "desc"
-                }}
-              ],
-              "query": {
-                "bool": {
-                  "should": [
-                    { "script": { "script": "doc['skills.externalCode'].contains(params.skillCode)" } },
-                    { "script": { "script": "doc['skills.externalCode'].contains(params.skillCode)" } },
-                    ...  ]
-                  }
-                }
+              "bool": {
+                "must": [
+                  {"terms": {"skills.externalCode": ?0}}
+                ]
               },
-              "params": {
-                "skillCode": { "type": "array", "value": :skillCodes }
-              }
-            }""")
+              "sort": [
+                {"_script": {"type": "number", "script": "_score", "order": "desc"}}
+              ]
+            }
+            """)
     public List<Opportunity> suggestOpportunities(@Param("skillCodes") List<String> skillCodes);
 }
