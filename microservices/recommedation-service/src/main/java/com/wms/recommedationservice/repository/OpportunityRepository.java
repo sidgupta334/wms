@@ -26,16 +26,26 @@ public interface OpportunityRepository extends ElasticsearchRepository<Opportuni
     List<Opportunity> searchOpportunitiesByTitle(String title);
 
     @Query("""
-            {
-              "bool": {
-                "must": [
-                  {"terms": {"skills.externalCode": ?0}}
-                ]
-              },
-              "sort": [
-                {"_script": {"type": "number", "script": "_score", "order": "desc"}}
-              ]
-            }
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "bool": {
+                          "must": [
+                            {"terms": {"skills.externalCode": ?0}}
+                          ]
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must": [
+                            {"term": {"jobTitle.externalCode": ?1}}
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
             """)
-    public List<Opportunity> suggestOpportunities(@Param("skillCodes") List<String> skillCodes);
+    public List<Opportunity> suggestOpportunities(@Param("skillCodes") List<String> skillCodes, String jobTitleId);
 }

@@ -62,7 +62,7 @@ public class OpportunitySearchService {
     public List<OpportunitySearchResponseDto> suggestOpportunities(String externalId) {
         Employee employee = employeeSearchService.getEmployeeByExternalId(externalId);
         List<String> skills = employee.getSkills().stream().map(Skill::getExternalCode).toList();
-        List<Opportunity> opportunities = opportunityRepository.suggestOpportunities(skills);
+        List<Opportunity> opportunities = opportunityRepository.suggestOpportunities(skills, employee.getJobTitle().getExternalCode());
         return  opportunities.stream().map(this::mapToOpportunitySearchResponseDto).toList();
     }
 
