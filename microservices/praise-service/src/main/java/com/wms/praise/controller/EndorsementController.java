@@ -25,7 +25,7 @@ public class EndorsementController {
     public boolean createEndorsement(@Valid @RequestBody EndorsementDto endorsementDto) {
         return endorsementService.createEndorsement(endorsementDto);
     }
-    @DeleteMapping()
+    @PostMapping("/unendorse")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> deleteEndorsement(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestBody EndorsementDeleteDto endorsementDeleteDto)
     {

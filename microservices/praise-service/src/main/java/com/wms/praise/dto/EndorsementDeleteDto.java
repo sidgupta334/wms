@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EndorsementDeleteDto {
-    private String entityId;
     private String giverId;
+    private String skillId;
 }

@@ -20,6 +20,7 @@ public class  EndorsementService {
 
     @Autowired
     private WebClient.Builder webClientBuilder;
+
     public boolean createEndorsement(EndorsementDto endorsementDto) {
         Endorsement endorsement = Endorsement.builder()
                 .giverId(endorsementDto.getGiverId())
@@ -29,6 +30,7 @@ public class  EndorsementService {
                 .build();
         try{
             endorsementRepository.save(endorsement);
+            indexEmployee(endorsementDto.getReceiverId());
             return true;
         }catch (Exception e) {
             log.error("Something went wrong while creating endorsement..." + e);
@@ -37,10 +39,11 @@ public class  EndorsementService {
     }
 
     public boolean deleteEndorsement(EndorsementDeleteDto endorsementDeleteDto) {
-        Endorsement endorsement = endorsementRepository.findByEntityId(endorsementDeleteDto.getEntityId());
+        Endorsement endorsement = endorsementRepository.getBySkillAndGiver(endorsementDeleteDto.getSkillId(), endorsementDeleteDto.getGiverId());
         if(endorsement == null)
             return false;
         endorsementRepository.delete(endorsement);
+        indexEmployee(endorsement.getReceiverId());
         return true;
     }
 
@@ -70,5 +73,18 @@ public class  EndorsementService {
                 .block();
         if (response == null) return null;
         return Arrays.stream(response).toList();
+    }
+
+    private void indexEmployee(String entityId) {
+        try {
+            webClientBuilder.baseUrl("http://RECOMMENDATION-SERVICE").build()
+                    .get()
+                    .uri("/api/search/employees/index/" + entityId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Something went wrong while indexing opportunity..." + e);
+        }
     }
 }

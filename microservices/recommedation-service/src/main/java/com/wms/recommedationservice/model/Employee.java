@@ -1,5 +1,6 @@
 package com.wms.recommedationservice.model;
 
+import com.wms.recommedationservice.dto.EndorsedSkill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,4 +28,6 @@ public class Employee {
     private JobTitle jobTitle;
     @Field(type = FieldType.Nested, includeInParent = true)
     private List<Skill> skills;
+    @Field(type = FieldType.Nested, includeInParent = true)
+    private List<EndorsedSkill> endorsedSkills;
 }

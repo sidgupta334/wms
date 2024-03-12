@@ -2,6 +2,7 @@ package com.wms.recommedationservice.service;
 
 import com.wms.recommedationservice.dto.EmployeeRequest;
 import com.wms.recommedationservice.dto.EmployeeSearchResponseDto;
+import com.wms.recommedationservice.dto.EndorsedSkill;
 import com.wms.recommedationservice.dto.JobTitleAndSkillResponseDto;
 import com.wms.recommedationservice.model.Employee;
 import com.wms.recommedationservice.model.JobTitle;
@@ -40,6 +41,8 @@ public class EmployeeSearchService {
         try {
             JobTitle jobTitle = getJobTitleById(employeeRequest.getJobTitleId());
             List<Skill> skills = getSkillsByIds(employeeRequest.getSkillIds());
+            List<JobTitleAndSkillResponseDto> skillEndorsements = Arrays.stream(getEndorsedSkills(employeeRequest.getExternalId())).toList();
+            List<EndorsedSkill> endorsedSkills = getEndorsements(skillEndorsements);
             Employee employeeToSave = Employee.builder()
                     .name(employeeRequest.getName())
                     .externalId(employeeRequest.getExternalId())
@@ -47,6 +50,7 @@ public class EmployeeSearchService {
                     .isAdmin(employeeRequest.isAdmin())
                     .jobTitle(jobTitle)
                     .skills(skills)
+                    .endorsedSkills(endorsedSkills)
                     .build();
 
             Optional<Employee> existingEmployee = employeeRepository.findById(employeeRequest.getExternalId());
@@ -76,6 +80,27 @@ public class EmployeeSearchService {
     public void reindexEmployee(String externalId) {
         EmployeeSearchResponseDto employee = getOriginalEmployeeByExternalId(externalId);
         reindexSingleEmployee(employee);
+    }
+
+    private List<EndorsedSkill> getEndorsements(List<JobTitleAndSkillResponseDto> skills) {
+        Map<String, Integer> skillMapping = new HashMap<>();
+        skills.forEach(skill -> {
+            if (skillMapping.containsKey(skill.getExternalCode())) {
+                var existingCount = skillMapping.get(skill.getExternalCode());
+                skillMapping.put(skill.getExternalCode(), existingCount + 1);
+            } else {
+                skillMapping.put(skill.getExternalCode(), 1);
+            }
+        });
+
+        return skills.stream().map(skill -> {
+            var count = skillMapping.get(skill.getExternalCode());
+            return EndorsedSkill.builder()
+                    .externalCode(skill.getExternalCode())
+                    .name(skill.getName())
+                    .count(count)
+                    .build();
+        }).toList();
     }
 
     private void reindexSingleEmployee(EmployeeSearchResponseDto employee) {
@@ -123,6 +148,15 @@ public class EmployeeSearchService {
                 .uri("http://EMPLOYEES-SERVICE/api/employees/details/" + externalId)
                 .retrieve()
                 .bodyToMono(EmployeeSearchResponseDto.class)
+                .block();
+    }
+
+    private JobTitleAndSkillResponseDto[] getEndorsedSkills(String externalId) {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://PRAISEANDENDORSEMENT-SERVICE/api/endorsement/" + externalId)
+                .retrieve()
+                .bodyToMono(JobTitleAndSkillResponseDto[].class)
                 .block();
     }
 }
