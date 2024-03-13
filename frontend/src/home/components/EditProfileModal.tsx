@@ -72,7 +72,7 @@ const EditProfileModal: React.FC<EditProfileModalType> = ({
             <Stack pt={5} spacing={4} alignItems="center" justifyContent="center">
               <Stack width="100%" spacing={2}>
                 <JobTitleSelector
-                  value={[jobTitle]}
+                  value={jobTitle ? [jobTitle] : []}
                   onChange={(jobTitle) => {
                     setJobTitle(jobTitle.length ? jobTitle[0] : undefined);
                   }}

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class  EndorsementService {
+public class EndorsementService {
     @Autowired
     EndorsementRepository endorsementRepository;
 
@@ -22,17 +22,21 @@ public class  EndorsementService {
     private WebClient.Builder webClientBuilder;
 
     public boolean createEndorsement(EndorsementDto endorsementDto) {
+        Endorsement existingEndorsement = endorsementRepository.getBySkillAndGiver(endorsementDto.getSkills(), endorsementDto.getGiverId());
+        if (existingEndorsement != null) {
+            return false;
+        }
         Endorsement endorsement = Endorsement.builder()
                 .giverId(endorsementDto.getGiverId())
                 .receiverId(endorsementDto.getReceiverId())
                 .skillId(endorsementDto.getSkills())
                 .timestamp(new Date())
                 .build();
-        try{
+        try {
             endorsementRepository.save(endorsement);
             indexEmployee(endorsementDto.getReceiverId());
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Something went wrong while creating endorsement..." + e);
             return false;
         }
@@ -40,7 +44,7 @@ public class  EndorsementService {
 
     public boolean deleteEndorsement(EndorsementDeleteDto endorsementDeleteDto) {
         Endorsement endorsement = endorsementRepository.getBySkillAndGiver(endorsementDeleteDto.getSkillId(), endorsementDeleteDto.getGiverId());
-        if(endorsement == null)
+        if (endorsement == null)
             return false;
         endorsementRepository.delete(endorsement);
         indexEmployee(endorsement.getReceiverId());
@@ -53,8 +57,7 @@ public class  EndorsementService {
         return getSkillsFromIds(skillIds.toArray(new String[0]));
     }
 
-    public AuthUserResponses getLoggedInUser(String token)
-    {
+    public AuthUserResponses getLoggedInUser(String token) {
         return webClientBuilder.build()
                 .get()
                 .uri("http://AUTH-SERVICE/api/auth/extract/" + token)

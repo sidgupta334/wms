@@ -8,6 +8,8 @@ import HomePage from 'home/components/HomePage';
 import AdminRoute from './AdminRoute';
 import AdminHomePage from 'admin/components/AdminHomePage';
 import OpportunitiesPage from 'home/opportunities/components/OpportunitiesPage';
+import SearchPage from 'search/components/SearchPage';
+import ProfilePage from 'search/components/ProfilePage';
 
 const AppRouter: React.FC = () => {
   return (
@@ -22,6 +24,8 @@ const AppRouter: React.FC = () => {
             path={AppRoutesEnum.OPPORTUNITIES}
             element={<LoggedInUserRoute element={<OpportunitiesPage />} />}
           />
+          <Route path={AppRoutesEnum.SEARCH} element={<SearchPage />} />
+          <Route path={AppRoutesEnum.PROFILE} element={<ProfilePage />} />
           <Route
             path={AppRoutesEnum.ADMIN_HOME}
             element={<AdminRoute element={<AdminHomePage />} />}

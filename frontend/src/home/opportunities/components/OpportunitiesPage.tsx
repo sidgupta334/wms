@@ -10,7 +10,6 @@ import useGetOpportunitiesApi from '../hooks/useGetOpportunitiesApi';
 import { CircularProgress } from '@mui/material';
 import ColorPalette from 'common/theme/colorPalette';
 import OpportunityCard from './OpportunityCard';
-import { map } from 'lodash';
 
 const OpportunitiesPage: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);

@@ -14,7 +14,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder = DEFAULT_PLACEHOLDER
   const [searchText, setSearchText] = useState('');
 
   const searchKeyword = () => {
-    navigateWithSearchParams(AppRoutesEnum.EXPLORE, { query: searchText });
+    navigateWithSearchParams(AppRoutesEnum.SEARCH, { query: searchText });
     setSearchText('');
   };
 

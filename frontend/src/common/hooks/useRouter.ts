@@ -1,5 +1,9 @@
 import { createSearchParams, useNavigate } from 'react-router-dom';
 
+const DYNAMIC_PATH_PARAM = {
+  EXTERNAL_ID: ':externalId',
+};
+
 const useRouter = () => {
   const navigate = useNavigate();
 
@@ -19,10 +23,22 @@ const useRouter = () => {
     });
   };
 
+  const redirectToEmployee = (
+    route: string,
+    externalId = '',
+    state = {},
+    e?: React.BaseSyntheticEvent,
+  ) => {
+    e && e.stopPropagation();
+    const profileRoute = route.replace(DYNAMIC_PATH_PARAM.EXTERNAL_ID, externalId);
+    navigate(profileRoute, { state });
+  };
+
   return {
     redirectToRoute,
     goBack,
     navigateWithSearchParams,
+    redirectToEmployee,
   };
 };
 

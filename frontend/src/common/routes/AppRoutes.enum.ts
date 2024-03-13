@@ -3,6 +3,8 @@ export enum AppRoutesEnum {
   HOME = '/home',
   EXPLORE = '/explore',
   OPPORTUNITIES = '/opportunities',
+  SEARCH = '/search',
+  PROFILE = '/profile/:externalId',
 
   // ADMIN Routes
   ADMIN_HOME = '/admin',

@@ -85,18 +85,20 @@ public class EmployeeSearchService {
     private List<EndorsedSkill> getEndorsements(List<JobTitleAndSkillResponseDto> skills) {
         Map<String, Integer> skillMapping = new HashMap<>();
         skills.forEach(skill -> {
-            if (skillMapping.containsKey(skill.getExternalCode())) {
-                var existingCount = skillMapping.get(skill.getExternalCode());
-                skillMapping.put(skill.getExternalCode(), existingCount + 1);
+            if (skillMapping.containsKey(skill.getId())) {
+                var existingCount = skillMapping.get(skill.getId());
+                skillMapping.put(skill.getId(), existingCount + 1);
             } else {
-                skillMapping.put(skill.getExternalCode(), 1);
+                skillMapping.put(skill.getId(), 1);
             }
         });
 
-        return skills.stream().map(skill -> {
-            var count = skillMapping.get(skill.getExternalCode());
+        Set<JobTitleAndSkillResponseDto> skillsSet = new HashSet<>(skills);
+
+        return skillsSet.stream().map(skill -> {
+            var count = skillMapping.get(skill.getId());
             return EndorsedSkill.builder()
-                    .externalCode(skill.getExternalCode())
+                    .externalCode(skill.getId())
                     .name(skill.getName())
                     .count(count)
                     .build();

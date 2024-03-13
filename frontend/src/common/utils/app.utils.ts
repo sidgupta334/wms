@@ -13,7 +13,6 @@ export const filterEndorsedAndSearchedSkills = (
   endorsedSkills: EndorsedSkillType[] = [],
   searchedSkills: JobSkillType[] = [],
 ): EndorsedSkillType[] => {
-  console.log('searchedSkills: ', searchedSkills);
   if (isEmpty(endorsedSkills) || isEmpty(searchedSkills)) {
     return [...endorsedSkills, ...mapToEndorsedSkills(searchedSkills)];
   }
@@ -24,9 +23,14 @@ export const filterEndorsedAndSearchedSkills = (
   });
 
   const uniqueSkills = searchedSkills.filter((skill) => !endorsedSkillsMap.has(skill.id));
-  return [...endorsedSkills, ...mapToEndorsedSkills(uniqueSkills)];
+  return [...mapToEndorsedSkills(uniqueSkills), ...endorsedSkills];
 };
 
 const mapToEndorsedSkills = (skills: JobSkillType[] = []): EndorsedSkillType[] => {
   return skills.map((skill) => ({ ...skill, externalCode: skill.id, count: 0 }));
+};
+
+export const getSearchTermFromQuery = (query: string) => {
+  const queryArray = query.split('?query=');
+  return queryArray.length === 2 ? queryArray[1] : null;
 };

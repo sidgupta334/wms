@@ -9,40 +9,41 @@ import ColorPalette from 'common/theme/colorPalette';
 import { useEndorseSkill } from 'home/hooks/useEndorseSkill';
 import { useUnendorseSkill } from 'home/hooks/useUnendorseSkill';
 import { EndorsedSkillType } from 'home/types/profile.type';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type SkillDetailsProps = {
   skill: EndorsedSkillType;
-  count: number;
   profileId: string;
 };
 
-const SkillDetails: React.FC<SkillDetailsProps> = ({ count, skill, profileId }) => {
-  const [skillCount, setSkillCount] = useState<number>(count);
+const SkillDetails: React.FC<SkillDetailsProps> = ({ skill, profileId }) => {
+  const [skillCount, setSkillCount] = useState<number>(skill.count);
+  const [disableEndorseButton, setDisableEndorseButton] = useState<boolean>(false);
+  const [disableUnendorseButton, setDisableUnendorseButton] = useState<boolean>(false);
   const { mutateAsync: endorseSkill, isLoading: isEndorsing } = useEndorseSkill(profileId);
   const { mutateAsync: unEndorseSkill, isLoading: isUnendorsing } =
     useUnendorseSkill(profileId);
   const { profile } = useSession();
 
-  useEffect(() => {
-    setSkillCount(skillCount || count);
-  }, [count]);
-
   const handleEndorseSkill = async () => {
     await endorseSkill({
-      giverId: profile?.eexternalId,
+      giverId: profile?.externalId,
       receiverId: profileId,
       skills: skill.externalCode,
     });
     setSkillCount((prev) => prev + 1);
+    setDisableEndorseButton(true);
+    setDisableUnendorseButton(false);
   };
 
   const handleUnendorseSkill = async () => {
     await unEndorseSkill({
-      giverId: profile?.eexternalId,
+      giverId: profile?.externalId,
       skillId: skill.externalCode,
     });
     setSkillCount((prev) => (prev === 0 ? 0 : prev - 1));
+    setDisableUnendorseButton(true);
+    setDisableEndorseButton(false);
   };
 
   return (
@@ -68,7 +69,7 @@ const SkillDetails: React.FC<SkillDetailsProps> = ({ count, skill, profileId }) 
               {skillCount}
             </Typography>
             <Button
-              disabled={isEndorsing}
+              disabled={isEndorsing || disableEndorseButton}
               variant="contained"
               size="small"
               onClick={handleEndorseSkill}
@@ -77,7 +78,7 @@ const SkillDetails: React.FC<SkillDetailsProps> = ({ count, skill, profileId }) 
               {!isEndorsing && 'Endorse'}
             </Button>
             <Button
-              disabled={isUnendorsing}
+              disabled={isUnendorsing || disableUnendorseButton}
               variant="outlined"
               size="small"
               onClick={handleUnendorseSkill}

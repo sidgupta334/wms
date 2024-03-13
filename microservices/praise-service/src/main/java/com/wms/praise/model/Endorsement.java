@@ -18,12 +18,8 @@ public class Endorsement {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String entityId;
-
-    @Column(nullable = false)
     private String skillId;
-    @Column(nullable = false)
     private String giverId;
-    @Column(nullable = false)
     private String receiverId;
     private Date timestamp;
 

@@ -49,7 +49,6 @@ const SkillsContent: React.FC<{ profile: ProfileType; searchedSkills?: JobSkillT
           <SkillDetails
             skill={skill}
             key={skill.externalCode}
-            count={skill.count}
             profileId={profile.externalId}
           />
         ))}
